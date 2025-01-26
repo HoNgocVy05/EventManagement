@@ -7,17 +7,17 @@
 
 {% block content %}
     <div class="bg-img">
-        <form action="/register" class="container-login">
+        <form action="{% url 'signup_view' %}" class="container-login" method="POST">
             <h1>EVENTHUB</h1>
-    
+            {% csrf_token %}
             <label for="name"><b>Tên tài khoản</b></label>
-            <input type="text" placeholder="Nhập Họ và Tên" name="name" required>
+            <input type="text" placeholder="Nhập Họ và Tên" name="username" required>
     
             <label for="email"><b>Email</b></label>
             <input type="text" placeholder="Nhập email" name="email" required>
     
             <label for="psw"><b>Mật khẩu</b></label>
-            <input type="password" placeholder="Nhập mật khẩu" name="psw" required>
+            <input type="password" placeholder="Nhập mật khẩu" name="password" required>
     
             <label for="confirm_psw"><b>Xác nhận mật khẩu</b></label>
             <input type="password" placeholder="Nhập lại mật khẩu" name="confirm_psw" required>
@@ -25,6 +25,9 @@
             <button type="submit" class="btn-login">Đăng ký</button>
         </form>
     </div>
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
 {% endblock %}
 
 {% block footer %}{% endblock %}
