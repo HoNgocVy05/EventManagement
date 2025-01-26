@@ -1,0 +1,25 @@
+{% extends "master.html" %}
+{%load static%}
+
+{% block title %}Login{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block content %}
+    <div class="bg-img">
+        <form action="/action_page.php" class="container-login">
+            <h1>Login</h1>
+    
+            <label for="email"><b>Email</b></label>
+            <input type="text" placeholder="Nhập Email" name="email" required>
+    
+            <label for="psw"><b>Password</b></label>
+            <input type="password" placeholder="Nhập Password" name="psw" required>
+    
+            <button type="submit" class="btn login" href="Đăng nhập">Login</button>
+        </form>
+    </div>
+{% endblock %}
+
+{% block footer %}{% endblock %}
+

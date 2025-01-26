@@ -2,7 +2,7 @@
 <nav class="navbar navbar-expand-md bg-dark navbar-dark" >
     <div class="container-fluid">
           <!-- Brand -->
-          <a class="navbar-brand" href="index.html">EVENTHUB</a>
+          <a class="navbar-brand" href={% url 'index' %}>EVENTHUB</a>
            <!-- toggle button -->
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -10,9 +10,6 @@
           <!-- Navbar links -->
           <div class="collapse navbar-collapse" id="collapsibleNavbar">
             <ul class="navbar-nav flex-column flex-md-row">
-                <!-- <li class="nav-item">
-                  <a class="nav-link" href="index.html" >Trang chủ</a>
-                </li> -->
                 <li class="nav-item">
                   <a class="nav-link" href="#infor">Thông tin</a>
                 </li>
@@ -32,7 +29,7 @@
                 <a class="nav-link" href="#">Đăng ký</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Đăng nhập</a>
+                <a class="nav-link" href={% url 'login' %}>Đăng nhập</a>
               </li>
               <div class="dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="eventDropdown" data-bs-toggle="dropdown" aria-expanded="false">
