@@ -39,8 +39,8 @@ input[type=text]:focus, input[type=password]:focus {
     outline: none;
 }
 
-.login {
-    background-color:rgb(109, 109, 109);
+.btn-login {
+    background-color:rgb(33, 37, 41);
     color: white;
     padding: 16px 20px;
     border: none;
@@ -49,6 +49,6 @@ input[type=text]:focus, input[type=password]:focus {
     opacity: 0.9;
 }
 
-.login:hover {
+.btn-login:hover {
     opacity: 1;
 }
