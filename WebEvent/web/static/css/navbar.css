@@ -1,0 +1,9 @@
+.dropdown {
+    position: relative;
+    z-index: 1500;
+}
+
+.dropdown-item:focus, .dropdown-item:active {
+      background-color: #212529 !important;
+      color: white;
+}
