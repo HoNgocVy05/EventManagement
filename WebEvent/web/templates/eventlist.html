@@ -1,29 +1,67 @@
 {% load static %}
-
-<nav class="navbar navbar-expand-md bg-white navbar-dark" >
+<nav class="navbar navbar-expand-md bg-white navbar-dark" id="eventlist" >
     <div class="container-fluid">
         <h5 class="navbar-title">Danh sách sự kiện</h5>
-        <!-- Search bar -->
-        <nav class="navbar navbar-expand-sm navbar-dark">
-            <form class="d-flex ms-auto" action="/action_page.php">
-              <input class="form-control form-control-sm me-2" type="search" placeholder="Bạn muốn tìm gì?" aria-label="Search">
-              <button class="btn btn-secondary btn-sm" type="submit">Search</button>
-        </form>            
-        </nav>
     </div>
 </nav>
 <div class="container">
-        <div class="card" style="width: 200px">
-            <img src="{% static 'img/event1.jpg' %}" class="card-img-top" alt="...">
-            <div class="card-body">
-                <div class="card-title">
-                    <h4>Tên sự kiện</h4>
-                </div>
-                <div class="card-text">
-                    <p>Thông tin sự kiện <br> Ngày tổ chức</p>
-                </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="card" style="width: 250px">
+                    <img src="{% static 'img/event1.jpg' %}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h4>Tên sự kiện</h4>
+                        </div>
+                        <div class="card-text">
+                            <p>Thông tin sự kiện <br> Ngày tổ chức</p>
+                        </div>
+                    </div>
+                </div> 
             </div>
-        </div> 
+
+            <div class="col-sm-3">
+                <div class="card" style="width: 250px">
+                    <img src="{% static 'img/event1.jpg' %}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h4>Tên sự kiện</h4>
+                        </div>
+                        <div class="card-text">
+                            <p>Thông tin sự kiện <br> Ngày tổ chức</p>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+
+            <div class="col-sm-3">
+                <div class="card" style="width: 250px">
+                    <img src="{% static 'img/event1.jpg' %}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h4>Tên sự kiện</h4>
+                        </div>
+                        <div class="card-text">
+                            <p>Thông tin sự kiện <br> Ngày tổ chức</p>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+
+            <div class="col-sm-3">
+                <div class="card" style="width: 250px">
+                    <img src="{% static 'img/event1.jpg' %}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h4>Tên sự kiện</h4>
+                        </div>
+                        <div class="card-text">
+                            <p>Thông tin sự kiện <br> Ngày tổ chức</p>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+        </div>
     </div>
-    
 </div>
