@@ -1,0 +1,30 @@
+{% load static %}
+<style>
+    .card {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px;
+    }
+</style>
+<nav class="navbar navbar-expand-md bg-dark navbar-dark" >
+    <div class="container-fluid">
+        <h5>Danh sach su kien</h5>
+    </div>
+    
+</nav>
+<div class="container">
+        <div class="card" style="width: 200px">
+            <img src="{% static 'img/event1.jpg' %}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <div class="card-title">
+                    <h4>Tên sự kiện</h4>
+                </div>
+                <div class="card-text">
+                    <p>Thông tin sự kiện <br> Ngày tổ chức</p>
+                </div>
+            </div>
+        </div> 
+    </div>
+    
+</div>

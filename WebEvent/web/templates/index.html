@@ -1,6 +1,6 @@
     {% extends 'master.html' %}
     {% load static %}
-    {% block title %} Trang Chu {% endblock %}
+    {% block title %} Trang Chủ {% endblock %}
 
     {% block content %}
       <!-- Carousel -->
@@ -27,4 +27,6 @@
           <span class="carousel-control-next-icon"></span>
         </button>
       </div>
+
+      {%include 'eventlist.html' %}
     {% endblock %}
