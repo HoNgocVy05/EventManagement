@@ -1,47 +1,47 @@
-from django.contrib.auth.models import User
+from web.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth import get_user_model
 
 # Create your views here.
 def get_index(request):
     return render(request, 'index.html')
-
-def get_login(request):
-    return render(request, 'login.html')
+    if request.method == "POST":
+        username = request.POST['username']
 
 def get_signup(request):
-    return render(request, 'signup.html')
-
-def signup_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         email = request.POST['email']
         password = request.POST['password']
+        confirm_psw = request.POST['confirm_psw']
         
-        if User.objects.filter(username=username).exists():
-            return render(request, 'signup.html', {'error': 'Tên người dùng đã tồn tại'})
-
+        if password != confirm_psw:
+            return render(request, 'signup.html', {'error': 'Mật khẩu không khớp!'})
+        
         if User.objects.filter(email=email).exists():
-            return render(request, 'signup.html', {'error': 'Email đã tồn tại'})
+            return render(request, 'signup.html', {'error': 'Email đã tồn tại!'})
         
-        if password != request.POST['confirm_psw']:
-            return render(request, 'signup.html', {'error': 'Mật khẩu không khớp'})
-
-
-        user = User.objects.create_user(username=username, email=email, password=password)
+        user = User(username=username, email=email, password=make_password(password))
         user.save()
-
+        messages.success(request, 'Đăng ký thành công! Hãy đăng nhập.')
         return redirect('login')
     return render(request, 'signup.html')
 
-def login_view(request):
+def get_login(request):
     if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
-        user = authenticate(request, email=email, password=password)
-        if user is not None:
+        User = get_user_model()
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return render(request, 'login.html', {'error': 'Email không tồn tại'})
+        if user.check_password(password):
             login(request, user)
-            return redirect('home')
+            return redirect('index')
         else:
-            return render(request, 'login.html', {'error': 'Invalid email or password'})
+            return render(request, 'login.html', {'error': 'Mật khẩu sai'})
     return render(request, 'login.html')

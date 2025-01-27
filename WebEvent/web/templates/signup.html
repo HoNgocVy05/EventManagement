@@ -7,7 +7,7 @@
 
 {% block content %}
     <div class="bg-img">
-        <form action="{% url 'signup_view' %}" class="container-login" method="POST">
+        <form action="{% url 'signup' %}" class="container-login" method="POST">
             <h1>EVENTHUB</h1>
             {% csrf_token %}
             <label for="name"><b>Tên tài khoản</b></label>

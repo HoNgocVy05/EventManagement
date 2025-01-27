@@ -7,12 +7,11 @@
 
 {% block content %}
     <div class="bg-img">
-        <form action="{% url 'login_view' %}" method="POST" class="container-login">
+        <form action="{% url 'login' %}" method="POST" class="container-login">
             <h1>EVENTHUB</h1>
             {% csrf_token %}
             <label for="email"><b>Email</b></label>
             <input type="text" placeholder="Nhập Email" name="email" required>
-    
             <label for="psw"><b>Mật khẩu</b></label>
             <input id="pw-input" type="password" placeholder="Nhập mật khẩu" name="password" required>
             <input type="checkbox" onclick="showPassword()"> Hiện mật khẩu
