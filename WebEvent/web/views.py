@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
+from django.contrib.auth import logout
 
 # Create your views here.
 def get_index(request):
@@ -45,3 +46,7 @@ def get_login(request):
         else:
             return render(request, 'login.html', {'error': 'Mật khẩu sai'})
     return render(request, 'login.html')
+
+def get_logout(request):
+    logout(request)
+    return redirect('index')
