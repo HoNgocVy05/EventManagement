@@ -2,7 +2,7 @@
 <nav class="navbar navbar-expand-md bg-dark navbar-dark" >
     <div class="container-fluid">
           <!-- Brand -->
-          <a class="navbar-brand" href={% url 'index' %}>EVENTHUB</a>
+          <a class="navbar-brand" href={% url 'event' %}>EVENTHUB</a>
            <!-- toggle button -->
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -32,7 +32,7 @@
                     {{ user.username }}
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="eventDropdown">
-                    <li><a class="dropdown-item" href="{% url 'profile' %} ">Tài khoản của bạn</a></li>
+                    <li><a class="dropdown-item" href="{% url 'profile' %}">Tài khoản của bạn</a></li>
                     <li><a class="dropdown-item" href="#">Vé của bạn</a></li>
                     <li><a class="dropdown-item" href="{% url 'logout' %}">Đăng xuất</a></li>
                   </ul>

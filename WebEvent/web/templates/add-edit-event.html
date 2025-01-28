@@ -1,0 +1,47 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card" style="width: 100%; max-width: 600px;">
+        <div class="card-body">
+            <h3 class="card-title text-center mb-4">
+                {% if event %} Chỉnh sửa sự kiện {% else %} Thêm sự kiện {% endif %}
+            </h3>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="eventName" class="form-label">Tên sự kiện</label>
+                    <input type="text" class="form-control" id="eventName" name="name" 
+                           value="{{ event.name }}" placeholder="Nhập tên sự kiện" required>
+                </div>
+                <div class="mb-3">
+                    <label for="eventDescription" class="form-label">Thông tin giới thiệu</label>
+                    <textarea class="form-control" id="eventDescription" name="description" 
+                              placeholder="Nhập thông tin sự kiện" required>{{ event.description }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="eventStartTime" class="form-label">Ngày giờ bắt đầu</label>
+                    <input type="datetime-local" class="form-control" id="eventStartTime" name="start_time" 
+                           value="{{ event.start_time|date:'Y-m-d\TH:i' }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="eventTickets" class="form-label">Số vé</label>
+                    <input type="number" class="form-control" id="eventTickets" name="tickets" 
+                           value="{{ event.tickets }}" placeholder="Nhập số vé" required>
+                </div>
+                <div class="mb-3">
+                    <label for="eventImage" class="form-label">Hình ảnh sự kiện</label>
+                    <input type="file" class="form-control" id="eventImage" name="image">
+                    {% if event.image %}
+                    <img src="{{ event.image.url }}" alt="Current Image" style="width: 100px; margin-top: 10px;">
+                    {% endif %}
+                </div>
+                <button type="submit" class="btn btn-dark w-100">
+                    {% if event %} Lưu thay đổi {% else %} Thêm sự kiện {% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

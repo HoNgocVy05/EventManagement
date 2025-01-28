@@ -1,124 +1,39 @@
 {% load static %}
+
 <nav class="navbar navbar-expand-md bg-white navbar-dark" id="eventlist">
     <div class="container-fluid d-flex justify-content-center">
-        <h4 class="navbar-title">Danh sách sự kiện</h4>
+        <h2 class="navbar-title">Danh sách sự kiện</h2>
     </div>
 </nav>
+
 <div class="container">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-3">
-                <div class="card" style="width: 250px">
-                    <img src="{% static 'img/event1.jpg' %}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <div class="card-title">
-                            <h4>Tên sự kiện</h4>
+            {% for event in events %}
+                <div class="col-sm-3 mb-3">
+                    <div class="card cardevent" style="width: 250px;">
+                        <img src="{% if event.image %}{{ event.image.url }}{% else %}{% static 'img/event1.jpg' %}{% endif %}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <h4>{{ event.name }}</h4>
+                            </div>
+                            <div class="card-text">
+                                <p>{{ event.start_time|date:"d-m-Y H:i" }}</p>
+                                <p>
+                                    Trạng thái: 
+                                    {% if event.status == 'Ongoing' %}
+                                        <span style="color: green;">Đang tiến hành</span>
+                                    {% elif event.status == 'Completed' %}
+                                        <span style="color: red;">Hoàn thành</span>
+                                    {% endif %}
+                                </p>
+                            </div>
                         </div>
-                        <div class="card-text">
-                            <p>Thông tin sự kiện <br> Ngày tổ chức</p>
-                        </div>
-                    </div>
-                </div> 
-            </div>
-
-            <div class="col-sm-3">
-                <div class="card" style="width: 250px">
-                    <img src="{% static 'img/event1.jpg' %}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <div class="card-title">
-                            <h4>Tên sự kiện</h4>
-                        </div>
-                        <div class="card-text">
-                            <p>Thông tin sự kiện <br> Ngày tổ chức</p>
-                        </div>
-                    </div>
-                </div> 
-            </div>
-
-            <div class="col-sm-3">
-                <div class="card" style="width: 250px">
-                    <img src="{% static 'img/event1.jpg' %}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <div class="card-title">
-                            <h4>Tên sự kiện</h4>
-                        </div>
-                        <div class="card-text">
-                            <p>Thông tin sự kiện <br> Ngày tổ chức</p>
-                        </div>
-                    </div>
-                </div> 
-            </div>
-
-            <div class="col-sm-3">
-                <div class="card" style="width: 250px">
-                    <img src="{% static 'img/event1.jpg' %}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <div class="card-title">
-                            <h4>Tên sự kiện</h4>
-                        </div>
-                        <div class="card-text">
-                            <p>Thông tin sự kiện <br> Ngày tổ chức</p>
-                        </div>
-                    </div>
-                </div> 
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-3">
-                <div class="card" style="width: 250px">
-                    <img src="{% static 'img/event1.jpg' %}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <div class="card-title">
-                            <h4>Tên sự kiện</h4>
-                        </div>
-                        <div class="card-text">
-                            <p>Thông tin sự kiện <br> Ngày tổ chức</p>
-                        </div>
-                    </div>
-                </div> 
-            </div>
-
-            <div class="col-sm-3">
-                <div class="card" style="width: 250px">
-                    <img src="{% static 'img/event1.jpg' %}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <div class="card-title">
-                            <h4>Tên sự kiện</h4>
-                        </div>
-                        <div class="card-text">
-                            <p>Thông tin sự kiện <br> Ngày tổ chức</p>
-                        </div>
-                    </div>
-                </div> 
-            </div>
-
-            <div class="col-sm-3">
-                <div class="card" style="width: 250px">
-                    <img src="{% static 'img/event1.jpg' %}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <div class="card-title">
-                            <h4>Tên sự kiện</h4>
-                        </div>
-                        <div class="card-text">
-                            <p>Thông tin sự kiện <br> Ngày tổ chức</p>
-                        </div>
-                    </div>
-                </div> 
-            </div>
-
-            <div class="col-sm-3">
-                <div class="card" style="width: 250px">
-                    <img src="{% static 'img/event1.jpg' %}" class="card-img-top" alt="...">
-                    <div class="card-body">
-                        <div class="card-title">
-                            <h4>Tên sự kiện</h4>
-                        </div>
-                        <div class="card-text">
-                            <p>Thông tin sự kiện <br> Ngày tổ chức</p>
-                        </div>
-                    </div>
-                </div> 
-            </div>
+                    </div> 
+                </div>
+            {% empty %}
+                <p>Không có sự kiện nào.</p>
+            {% endfor %}
         </div>
     </div>
 </div>
