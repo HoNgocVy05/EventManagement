@@ -14,19 +14,19 @@
                     <div class="card cardevent" style="width: 250px;">
                         <img src="{% if event.image %}{{ event.image.url }}{% else %}{% static 'img/event1.jpg' %}{% endif %}" class="card-img-top" alt="...">
                         <div class="card-body">
-                            <div class="card-title">
+                            <a href="#" class="card-title">
                                 <h4>{{ event.name }}</h4>
-                            </div>
+                            </a>
                             <div class="card-text">
-                                <p>{{ event.start_time|date:"d-m-Y H:i" }}</p>
-                                <p>
+                                <h9> Ngày bắt đầu: {{ event.start_time|date:"d-m-Y H:i" }}</h9><br>
+                                <h9>
                                     Trạng thái: 
                                     {% if event.status == 'Ongoing' %}
                                         <span style="color: green;">Đang tiến hành</span>
                                     {% elif event.status == 'Completed' %}
                                         <span style="color: red;">Hoàn thành</span>
                                     {% endif %}
-                                </p>
+                                </h9>
                             </div>
                         </div>
                     </div> 

@@ -13,10 +13,21 @@
                 <li class="nav-item">
                   <a class="nav-link" href="#infor">Thông tin</a>
                 </li>
+                <!--khách-->
                 <li class="nav-item">
                   <a class="nav-link" href="#eventlist">Sự kiện</a>
                 </li> 
-            </ul>
+                <!--manager-->
+                <div class="dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="eventDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Sự kiện
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="eventDropdown">
+                    <li><a class="dropdown-item" href="#eventlist">Danh sách sự kiện</a></li>
+                    <li><a class="dropdown-item" href="{% url 'event' %}">Thêm sự kiện</a></li>
+                  </ul>
+                </div>  
+            </ul> 
             <!-- Search bar -->
           <nav class="navbar navbar-expand-sm navbar-dark" id="searchbar">
             <form class="d-flex ms-auto" action="/action_page.php">
