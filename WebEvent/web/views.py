@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def get_index(request):
@@ -44,9 +45,14 @@ def get_login(request):
             login(request, user)
             return redirect('index')
         else:
-            return render(request, 'login.html', {'error': 'Mật khẩu sai'})
+            return render(request, 'login.html', {'error': 'Mật khẩu hoặc email không đúng'})
     return render(request, 'login.html')
 
 def get_logout(request):
     logout(request)
     return redirect('index')
+
+@login_required
+def profile(request):
+    user = request.user
+    return render(request, 'profile.html', {'user': user})

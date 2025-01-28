@@ -32,7 +32,7 @@
                     {{ user.username }}
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="eventDropdown">
-                    <li><a class="dropdown-item" href="#">Trang cá nhân</a></li>
+                    <li><a class="dropdown-item" href="{% url 'profile' %} ">Tài khoản của bạn</a></li>
                     <li><a class="dropdown-item" href="#">Vé của bạn</a></li>
                     <li><a class="dropdown-item" href="{% url 'logout' %}">Đăng xuất</a></li>
                   </ul>
