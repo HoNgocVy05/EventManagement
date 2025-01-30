@@ -9,6 +9,8 @@ from .models import Event, Ticket
 from django.utils.timezone import make_aware
 import uuid
 from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.utils.html import format_html
 
 # Create your views here.
 def get_index(request):
@@ -135,16 +137,41 @@ def buyticket(request, event_id):
             )
             tickets.append(ticket)
 
-        ticket_details = "\n".join([f"Vé: {t.qr_code} - {event.name}" for t in tickets])
-        send_mail(
-            subject="Xác nhận mua vé",
-            message=f"Bạn đã mua {quantity} vé cho sự kiện {event.name}.\nMã QR của bạn:\n{ticket_details}",
-            from_email="vyhn5306@ut.edu.vn",
-            recipient_list=[email]
-        )
+        # Tạo danh sách vé với mã QR
+        ticket_details = "".join([
+            f"<p><strong>Vé:</strong> {t.qr_code}</p>"
+            f'<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={t.qr_code}" alt="QR Code">'
+            for t in tickets
+        ])
+
+        subject = "Xác nhận mua vé"
+        from_email = "hna.191081@gmail.com"
+        to_email = [email]
+
+        mailcontent = format_html(f"""
+            <html>
+            <body>
+                <h2 style="color: #2c3e50;">Xác nhận mua vé</h2>
+                <p>Chào bạn,</p>
+                <p>Bạn đã mua <strong>{quantity}</strong> vé cho sự kiện <strong>{event.name}</strong>.</p>
+                <p><strong>Thời gian sự kiện:</strong> {event.start_time.strftime("%d/%m/%Y %H:%M")}</p>
+                <p>Cảm ơn bạn đã quan tâm đến sự kiện của chúng tôi!</p>
+                <h3>Chi tiết vé:</h3>
+                {ticket_details}
+                <p style="margin-top:20px; color:#666;">Trân trọng,<br>Ban tổ chức sự kiện</p>
+            </body>
+            </html>
+        """)
+
+        email_message = EmailMultiAlternatives(subject, "Bạn đã mua vé thành công.", from_email, to_email)
+        email_message.attach_alternative(mailcontent, "text/html")
+        email_message.send()
+
         return redirect('yourtickets')
+    
     return render(request, 'buytickets.html', {'event': event})
 
 def yourtickets(request):
     tickets = Ticket.objects.filter(user=request.user)
     return render(request, 'yourticket.html', {'tickets': tickets})
+
