@@ -24,12 +24,11 @@
     color: #000;
 }
 
-/* Giới hạn chiều dài tên sự kiện và hiển thị dấu "..." */
 .card-body h4 {
-    white-space: nowrap;           /* Ngừng xuống dòng */
-    overflow: hidden;              /* Ẩn phần văn bản vượt quá chiều dài */
-    text-overflow: ellipsis;       /* Hiển thị dấu "..." */
-    max-width: 180px;              /* Giới hạn chiều rộng, điều chỉnh theo nhu cầu */
-    display: block;                /* Đảm bảo thẻ h4 hoạt động như block */
-    font-size: 1.1em;              /* Tùy chỉnh kích thước chữ */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+    display: block;
+    font-size: 1.1em;
 }

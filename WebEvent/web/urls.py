@@ -15,6 +15,7 @@ urlpatterns = [
     path('event/edit/<int:event_id>/', views.add_edit_event, name='event'),
     path('event/detail/<int:event_id>/', views.eventdetail, name='eventdetail'),
     path('event/end/<int:event_id>/', views.endevent, name='endevent'),
+    path('event/delete/<int:event_id>/', views.deleteevent, name='deleteevent'),
 ]
 
 if settings.DEBUG:
