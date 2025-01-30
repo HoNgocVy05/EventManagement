@@ -1,0 +1,52 @@
+{% extends 'master.html' %}
+{% block title %}Mua vé{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card" style="width: 100%; max-width: 600px;">
+        <div class="card-body">
+            <div class="container mt-4">
+                <h2>{{ event.name }}</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label>Email:</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Số điện thoại:</label>
+                        <input type="text" name="phone_number" class="form-control" 
+                               pattern="^\d{10}$" 
+                               maxlength="10" 
+                               title="Số điện thoại phải chứa đúng 10 chữ số." 
+                               required>
+                    </div>
+                    <div class="mb-3">
+                        <label>Số lượng vé:</label>
+                        <input type="number" name="quantity" class="form-control" min="1" max="{{ event.tickets }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-dark">Thanh toán</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function changeQuantity(value) {
+        let quantityInput = document.getElementById("quantity");
+        let currentValue = parseInt(quantityInput.value);
+        let maxTickets = parseInt(quantityInput.max);
+        
+        if (currentValue + value >= 1 && currentValue + value <= maxTickets) {
+            quantityInput.value = currentValue + value;
+        }
+    }
+    
+    // Hiển thị modal nếu hết vé
+    {% if event.tickets == 0 %}
+        var modal = new bootstrap.Modal(document.getElementById('outOfTicketsModal'));
+        modal.show();
+    {% endif %}
+</script>
+{% endblock %}

@@ -9,6 +9,14 @@
     flex-direction: column;
 }
 
+.cardprofile {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
 .cardevent:hover {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     transform: scale(1.02);

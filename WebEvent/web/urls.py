@@ -16,6 +16,8 @@ urlpatterns = [
     path('event/detail/<int:event_id>/', views.eventdetail, name='eventdetail'),
     path('event/end/<int:event_id>/', views.endevent, name='endevent'),
     path('event/delete/<int:event_id>/', views.deleteevent, name='deleteevent'),
+    path('event/<int:event_id>/buy/', views.buyticket, name='buyticket'),
+    path('your-tickets/', views.yourtickets, name='yourtickets'),
 ]
 
 if settings.DEBUG:

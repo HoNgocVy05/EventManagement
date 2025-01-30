@@ -9,7 +9,6 @@ class User(AbstractUser):
 User = get_user_model()
 
 class Event(models.Model):
-    
     name = models.CharField(max_length=200)
     description = models.TextField()
     start_time = models.DateTimeField()
@@ -19,3 +18,14 @@ class Event(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Ticket(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=10)
+    qr_code = models.CharField(max_length=100, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Vé của {self.user.username} - {self.event.name}"
