@@ -62,35 +62,47 @@ def profile(request):
 
 @login_required
 def add_edit_event(request, event_id=None):
+    event = None
     if event_id:
         event = get_object_or_404(Event, id=event_id)
-    else:
-        event = None
-
     if request.method == 'POST':
         name = request.POST['name']
         description = request.POST['description']
         start_time = request.POST['start_time']
         tickets = request.POST['tickets']
         image = request.FILES.get('image')
-
-        if event:
+        if event:  
             event.name = name
             event.description = description
             event.start_time = start_time
             event.tickets = tickets
             if image:
                 event.image = image
-            event.save()
         else:
             event = Event.objects.create(
                 name=name,
                 description=description,
                 start_time=start_time,
                 tickets=tickets,
-                image=image,
+                image=image
             )
-
-        return redirect('index') 
-
+        event.save()
+        return redirect('index')
     return render(request, 'add-edit-event.html', {'event': event})
+
+@login_required
+def endevent(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    if request.user.is_staff:
+        event.is_ended = True
+        event.status = 'Completed'
+        event.save()
+        messages.success(request, "Sự kiện đã được kết thúc thành công.")
+    else:
+        messages.error(request, "Bạn không có quyền thực hiện thao tác này.")
+    
+    return redirect('eventdetail', event_id=event.id)
+
+def eventdetail(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    return render(request, 'eventdetail.html', {'event': event})

@@ -2,7 +2,7 @@
 
 <nav class="navbar navbar-expand-md bg-white navbar-dark" id="eventlist">
     <div class="container-fluid d-flex justify-content-center">
-        <h2 class="navbar-title">Danh sách sự kiện</h2>
+        <h3 class="navbar-title">Danh sách sự kiện</h3>
     </div>
 </nav>
 
@@ -11,20 +11,20 @@
         <div class="row">
             {% for event in events %}
                 <div class="col-sm-3 mb-3">
-                    <div class="card cardevent" style="width: 250px;">
+                    <div class="card cardevent" style="width: 250px; height=300px">
                         <img src="{% if event.image %}{{ event.image.url }}{% else %}{% static 'img/event1.jpg' %}{% endif %}" class="card-img-top" alt="...">
                         <div class="card-body">
-                            <a href="#" class="card-title">
+                            <a href="{% url 'eventdetail' event.id %}" class="card-title">
                                 <h4>{{ event.name }}</h4>
                             </a>
                             <div class="card-text">
                                 <h9> Ngày bắt đầu: {{ event.start_time|date:"d-m-Y H:i" }}</h9><br>
                                 <h9>
                                     Trạng thái: 
-                                    {% if event.status == 'Ongoing' %}
-                                        <span style="color: green;">Đang tiến hành</span>
-                                    {% elif event.status == 'Completed' %}
-                                        <span style="color: red;">Hoàn thành</span>
+                                    {% if event.is_ended %}
+                                        <span style="color: red;">Đã kết thúc</span>
+                                    {% else %}
+                                        <span style="color: green;">Sắp diễn ra</span>
                                     {% endif %}
                                 </h9>
                             </div>

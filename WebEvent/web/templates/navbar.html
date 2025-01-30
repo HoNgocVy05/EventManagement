@@ -2,7 +2,7 @@
 <nav class="navbar navbar-expand-md bg-dark navbar-dark" >
     <div class="container-fluid">
           <!-- Brand -->
-          <a class="navbar-brand" href={% url 'event' %}>EVENTHUB</a>
+          <a class="navbar-brand" href={% url 'index' %}>EVENTHUB</a>
            <!-- toggle button -->
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar" aria-controls="collapsibleNavbar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -30,7 +30,7 @@
             </ul> 
             <!-- Search bar -->
           <nav class="navbar navbar-expand-sm navbar-dark" id="searchbar">
-            <form class="d-flex ms-auto" action="/action_page.php">
+            <form method="GET" action="{% url 'index' %}" class="d-flex ms-auto">
               <input class="form-control form-control-sm me-2" type="search" placeholder="Bạn muốn tìm gì?" aria-label="Search">
               <button class="btn btn-secondary btn-sm" type="submit">Search</button>
           </form>            

@@ -11,7 +11,10 @@ urlpatterns = [
     path('signup/', views.get_signup, name='signup'),
     path('logout/', views.get_logout, name='logout'),
     path('profile/', views.profile, name='profile'),
-    path('event/', views.add_edit_event, name='event'),
+    path('event/add/', views.add_edit_event, name='event'),
+    path('event/edit/<int:event_id>/', views.add_edit_event, name='event'),
+    path('event/detail/<int:event_id>/', views.eventdetail, name='eventdetail'),
+    path('event/end/<int:event_id>/', views.endevent, name='endevent'),
 ]
 
 if settings.DEBUG:

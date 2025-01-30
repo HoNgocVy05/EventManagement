@@ -8,5 +8,5 @@ SHOW TABLES;
 drop DATABASE EVENTDB;
 create DATABASE EVENTDB;
 
-select *from 
+select *from web_event
 
