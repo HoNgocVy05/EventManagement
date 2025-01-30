@@ -15,9 +15,10 @@ from django.utils.html import format_html
 # Create your views here.
 def get_index(request):
     events = Event.objects.all()
-    return render(request, 'index.html', {'events': events})
     if request.method == "POST":
         username = request.POST['username']
+    events = Event.objects.all().order_by('is_ended', '-start_time')
+    return render(request, 'index.html', {'events': events})
 
 def get_signup(request):
     if request.method == 'POST':
@@ -97,6 +98,7 @@ def endevent(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     event.is_ended = True
     event.status = 'Completed'
+    Ticket.objects.filter(event=event).delete()
     event.save()
     return redirect('eventdetail', event_id=event.id)
 
