@@ -35,6 +35,11 @@
                            value="{{ event.tickets }}" placeholder="Nhập số vé" required>
                 </div>
                 <div class="mb-3">
+                    <label for="eventPrice" class="form-label">Giá vé (VNĐ)</label>
+                    <input type="number" class="form-control" id="eventPrice" name="price" 
+                           value="{{ event.price }}" placeholder="Nhập giá vé" min="0" required>
+                </div>                
+                <div class="mb-3">
                     <label for="eventImage" class="form-label">Hình ảnh sự kiện</label>
                     <input type="file" class="form-control" id="eventImage" name="image">
                     {% if event.image %}

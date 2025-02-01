@@ -72,13 +72,15 @@ def add_edit_event(request, event_id=None):
         name = request.POST['name']
         description = request.POST['description']
         start_time = request.POST['start_time']
-        tickets = request.POST['tickets']
         image = request.FILES.get('image')
+        tickets = request.POST.get('tickets', 0)
+        price = request.POST.get('price', 0)
         if event:  
             event.name = name
             event.description = description
             event.start_time = start_time
             event.tickets = tickets
+            event.price = price
             if image:
                 event.image = image
         else:
@@ -87,7 +89,8 @@ def add_edit_event(request, event_id=None):
                 description=description,
                 start_time=start_time,
                 tickets=tickets,
-                image=image
+                image=image,
+                price=price
             )
         event.save()
         return redirect('index')
@@ -120,6 +123,7 @@ def buyticket(request, event_id):
         email = request.POST.get('email')
         phone_number = request.POST.get('phone_number')
         quantity = int(request.POST.get('quantity'))
+        total_price = event.price * quantity
 
         if event.tickets < quantity:
             return redirect('buyticket', event_id=event.id)
@@ -139,7 +143,6 @@ def buyticket(request, event_id):
             )
             tickets.append(ticket)
 
-        # Tạo danh sách vé với mã QR
         ticket_details = "".join([
             f"<p><strong>Vé:</strong> {t.qr_code}</p>"
             f'<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={t.qr_code}" alt="QR Code">'

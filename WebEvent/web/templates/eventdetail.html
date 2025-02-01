@@ -23,7 +23,7 @@
                     <span class="badge bg-success">Sắp diễn ra</span>
                 {% endif %}
             </p>
-
+            <p><strong>Giá vé:</strong> {{ event.price|floatformat:"0" }} VNĐ</p>
             <div class="mb-4">
                 {% if not event.is_ended %}
                     {% if user.is_authenticated %}
