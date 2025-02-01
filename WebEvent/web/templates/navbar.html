@@ -11,12 +11,12 @@
           <div class="collapse navbar-collapse" id="collapsibleNavbar">
             <ul class="navbar-nav flex-column flex-md-row">
                 <li class="nav-item">
-                  <a class="nav-link" href="#infor">Thông tin</a>
+                  <a class="nav-link" href="{% url 'introduction' %}">Thông tin</a>
                 </li>
                 <!--khách-->
                 {% if not user.is_staff %}
                 <li class="nav-item">
-                  <a class="nav-link" href="#eventlist">Sự kiện</a>
+                  <a class="nav-link" href="{% url 'eventlist' %}">Sự kiện</a>
                 </li> 
                 {% endif %}
                 <!--manager-->
@@ -26,7 +26,7 @@
                       Sự kiện
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="eventDropdown">
-                      <li><a class="dropdown-item" href="#eventlist">Danh sách sự kiện</a></li>
+                      <li><a class="dropdown-item" href="{% url 'eventlist' %}">Danh sách sự kiện</a></li>
                       <li><a class="dropdown-item" href="{% url 'event' %}">Thêm sự kiện</a></li>
                     </ul>
                   </div>  

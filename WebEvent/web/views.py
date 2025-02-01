@@ -180,3 +180,10 @@ def yourtickets(request):
     tickets = Ticket.objects.filter(user=request.user)
     return render(request, 'yourticket.html', {'tickets': tickets})
 
+def evenlist(request):
+    events = Event.objects.all()
+    events = Event.objects.all().order_by('is_ended', '-start_time')
+    return render(request, 'list.html', {'events': events})
+
+def introduction(request):
+    return render(request, 'introduction.html')
