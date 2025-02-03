@@ -20,6 +20,7 @@ urlpatterns = [
     path('your-tickets/', views.yourtickets, name='yourtickets'),
     path('eventlist/', views.evenlist, name='eventlist'),
     path('introduction/', views.introduction, name='introduction'),
+    path('search/', views.search_events, name='search_events'),
 ]
 
 if settings.DEBUG:

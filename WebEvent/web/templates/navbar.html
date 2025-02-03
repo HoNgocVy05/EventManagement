@@ -33,15 +33,15 @@
                 {% endif %}
             </ul> 
             <!-- Search bar -->
-          <nav class="navbar navbar-expand-sm navbar-dark" id="searchbar">
-            <form method="GET" action="{% url 'index' %}" class="d-flex ms-auto">
-              <input class="form-control form-control-sm me-2" type="search" placeholder="Bạn muốn tìm gì?" aria-label="Search">
-              <button class="btn btn-secondary btn-sm" type="submit">Search</button>
-          </form>            
-          </nav>
+            <nav class="navbar navbar-expand-sm navbar-dark" id="searchbar">
+              <form id="searchForm" method="GET" action="{% url 'search_events' %}" class="d-flex position-relative">
+                <input class="form-control me-2" type="search" id="searchInput" name="q" placeholder="Bạn muốn tìm gì?" aria-label="Search" autocomplete="off">
+                <button class="btn btn-secondary" type="submit">Search</button>
+                <ul id="suggestions" class="dropdown-menu position-absolute w-100" style="display: none;"></ul>
+              </form>        
+            </nav>
             <ul class="navbar-nav ms-auto">
               {% if user.is_authenticated %}
-                <!-- Hiển thị menu user khi đã đăng nhập -->
                 <div class="dropdown">
                   <a class="nav-link dropdown-toggle" href="#" id="eventDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     {{ user.username }}
@@ -53,7 +53,6 @@
                   </ul>
                 </div>   
               {% else %}
-                <!-- Hiển thị nút đăng nhập khi chưa đăng nhập -->
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'login' %}">Đăng nhập</a>
                 </li>

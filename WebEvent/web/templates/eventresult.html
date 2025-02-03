@@ -1,0 +1,37 @@
+{% extends 'master.html' %}
+{% load static %}
+
+{% block title %}Kết quả tìm kiếm{% endblock %}
+
+{% block content %}
+<nav class="navbar navbar-expand-md bg-white navbar-dark">
+    <div class="container-fluid d-flex justify-content-center">
+        <h3 class="navbar-title">Kết quả tìm kiếm cho "{{ query}}"</h3>
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="row">
+        {% for event in events %}
+            <div class="col-sm-3 mb-3">
+                <div class="card cardevent" style="width: 250px; height=300px">
+                    <img src="{% if event.image %}{{ event.image.url }}{% else %}{% static 'img/event1.jpg' %}{% endif %}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <a href="{% url 'eventdetail' event.id %}" class="card-title">
+                            <h4>{{ event.name }}</h4>
+                        </a>
+                        <p>{{ event.description|truncatechars:50 }}</p>
+                    </div>
+                </div> 
+            </div>
+        {% empty %}
+            <p class="text-center text-muted">Không có kết quả tìm kiếm nào.</p>
+        {% endfor %}
+    </div>
+
+    {% if events %}
+        <p class="text-center text-muted mt-3">Không còn kết quả nào khác.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -11,6 +11,7 @@ import uuid
 from django.core.mail import send_mail
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import format_html
+from django.http import JsonResponse
 
 # Create your views here.
 def get_index(request):
@@ -187,3 +188,14 @@ def evenlist(request):
 
 def introduction(request):
     return render(request, 'introduction.html')
+
+def search_events(request):
+    query = request.GET.get('q', '').strip()
+    
+    if request.GET.get('ajax'):
+        events = Event.objects.filter(name__icontains=query)[:5] if query else []
+        data = [{"id": event.id, "name": event.name, "description": event.description} for event in events]
+        return JsonResponse(data, safe=False)
+
+    events = Event.objects.filter(name__icontains=query) if query else []
+    return render(request, 'eventresult.html', {'events': events, 'query': query})
