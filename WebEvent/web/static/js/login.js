@@ -6,3 +6,10 @@ function showPassword() {
       x.type = "password";
     }
 }
+
+$(document).ready(function() {
+  $('.toggle-tickets').click(function() {
+      var target = $(this).data('bs-target');
+      $(target).stop(true, true).slideToggle(300);
+  });
+});

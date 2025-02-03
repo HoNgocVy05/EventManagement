@@ -1,0 +1,56 @@
+{% extends 'master.html' %}
+{% block title %} Quản lý sự kiện {% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-4">
+    <div class="table-responsive">
+        <table class="table table-bordered rounded">
+            <thead>
+                <tr class="table-dark">
+                    <th>Tên sự kiện</th>
+                    <th class="text-nowrap">Số vé đã bán</th>
+                    <th class="text-nowrap">Số vé còn lại</th>
+                    <th class="text-nowrap">Trạng thái</th>
+                    <th class="text-nowrap">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in event_data %}
+                <tr class="table-secondary">
+                    <td>{{ data.event.name }}</td>
+                    <td>{{ data.tickets_sold }}</td>
+                    <td>{{ data.remaining_tickets }}</td>
+                    <td>
+                        {% if data.event.is_ended %}
+                            <span class="badge bg-secondary">Đã kết thúc</span>
+                        {% else %}
+                            <span class="badge bg-success">Sắp diễn ra</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-info btn-dark" data-bs-toggle="collapse" data-bs-target="#tickets-{{ data.event.id }}">Xem</button>
+                    </td>
+                </tr>
+                <tr id="tickets-{{ data.event.id }}" class="collapse">
+                    <td colspan="5">
+                        <ul>
+                            {% for ticket in data.ticket_list %}
+                                <li>
+                                    <strong>{{ ticket.user.username }}</strong> - {{ ticket.email }} - Số điện thoại: {{ ticket.phone_number }} - QR Code: {{ ticket.qr_code }} - Mua vào: {{ ticket.created_at|date:"d/m/Y H:i" }}
+                                </li>
+                            {% empty %}
+                                <li>Chưa có vé được bán cho sự kiện này.</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5">Không có sự kiện nào.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

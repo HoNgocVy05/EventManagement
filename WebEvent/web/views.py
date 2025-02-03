@@ -59,12 +59,10 @@ def get_logout(request):
     logout(request)
     return redirect('index')
 
-@login_required
 def profile(request):
     user = request.user
     return render(request, 'profile.html', {'user': user})
 
-@login_required
 def add_edit_event(request, event_id=None):
     event = None
     if event_id:
@@ -97,7 +95,6 @@ def add_edit_event(request, event_id=None):
         return redirect('index')
     return render(request, 'add-edit-event.html', {'event': event})
 
-@login_required
 def endevent(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     event.is_ended = True
@@ -106,7 +103,6 @@ def endevent(request, event_id):
     event.save()
     return redirect('eventdetail', event_id=event.id)
 
-@login_required
 def deleteevent(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     Ticket.objects.filter(event=event).delete()
@@ -122,7 +118,6 @@ def eventdetail(request, event_id):
 def buyticket(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     if request.method == 'POST':
-        name = request.POST.get('name')
         email = request.POST.get('email')
         phone_number = request.POST.get('phone_number')
         quantity = int(request.POST.get('quantity'))
@@ -141,7 +136,6 @@ def buyticket(request, event_id):
             ticket = Ticket.objects.create(
                 event=event,
                 user=request.user,
-                name=name,
                 email=email,
                 phone_number=phone_number,
                 qr_code=qr_code
@@ -203,3 +197,20 @@ def search_events(request):
 
     events = Event.objects.filter(name__icontains=query) if query else []
     return render(request, 'eventresult.html', {'events': events, 'query': query})
+
+def eventmanagement(request):
+    events = Event.objects.all()
+
+    event_data = []
+    for event in events:
+        tickets = Ticket.objects.filter(event=event)
+        ticket_list = [{"user": ticket.user, "email": ticket.email, "phone_number": ticket.phone_number, "qr_code": ticket.qr_code, "created_at": ticket.created_at} for ticket in tickets]
+
+        event_data.append({
+            'event': event,
+            'tickets_sold': len(tickets),
+            'remaining_tickets': event.tickets - len(tickets),
+            'ticket_list': ticket_list
+        })
+
+    return render(request, 'eventmanagement.html', {'event_data': event_data})

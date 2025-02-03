@@ -21,6 +21,7 @@ urlpatterns = [
     path('eventlist/', views.evenlist, name='eventlist'),
     path('introduction/', views.introduction, name='introduction'),
     path('search/', views.search_events, name='search_events'),
+    path('event-management/', views.eventmanagement, name='eventmanagement'),
 ]
 
 if settings.DEBUG:
