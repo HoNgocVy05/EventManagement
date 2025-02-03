@@ -26,11 +26,15 @@
             <p><strong>Giá vé:</strong> {{ event.price|floatformat:"0" }} VNĐ</p>
             <div class="mb-4">
                 {% if not event.is_ended %}
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'buyticket' event.id %}" class="btn btn-danger me-2">Mua vé</a>
-                    {% else %}
-                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#loginRequiredModal">Mua vé</button>
-                    {% endif %}
+                  {% if user.is_authenticated %}
+                      {% if out_of_tickets %}
+                          <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#outOfTicketsModal">Mua vé</button>
+                      {% else %}
+                          <a href="{% url 'buyticket' event.id %}" class="btn btn-danger me-2">Mua vé</a>
+                      {% endif %}
+                  {% else %}
+                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#loginRequiredModal">Mua vé</button>
+                  {% endif %}
                 {% endif %}
             
                 {% if user.is_authenticated and user.is_staff %}
@@ -109,6 +113,24 @@
         </div>
       </div>
     </div>
+</div>
+
+<!--Out of ticket-->
+<div class="modal fade" id="outOfTicketsModal" tabindex="-1" aria-labelledby="outOfTicketsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="outOfTicketsModalLabel">Thông báo hết vé</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Sự kiện này đã hết vé.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+      </div>
+    </div>
   </div>
+</div>
   
 {% endblock %}

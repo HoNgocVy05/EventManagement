@@ -115,12 +115,14 @@ def deleteevent(request, event_id):
 
 def eventdetail(request, event_id):
     event = get_object_or_404(Event, id=event_id)
+    out_of_tickets = event.tickets <= 0
     context = {'event': event,}
-    return render(request, 'eventdetail.html', {'event': event})
+    return render(request, 'eventdetail.html', {'event': event, 'out_of_tickets': out_of_tickets})
 
 def buyticket(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     if request.method == 'POST':
+        name = request.POST.get('name')
         email = request.POST.get('email')
         phone_number = request.POST.get('phone_number')
         quantity = int(request.POST.get('quantity'))
@@ -128,6 +130,7 @@ def buyticket(request, event_id):
 
         if event.tickets < quantity:
             return redirect('buyticket', event_id=event.id)
+            return render(request, 'buytickets.html', {'event': event, 'out_of_tickets': True})
 
         event.tickets -= quantity
         event.save()
@@ -138,6 +141,7 @@ def buyticket(request, event_id):
             ticket = Ticket.objects.create(
                 event=event,
                 user=request.user,
+                name=name,
                 email=email,
                 phone_number=phone_number,
                 qr_code=qr_code

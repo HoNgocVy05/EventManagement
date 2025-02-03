@@ -39,22 +39,4 @@
         </div>
     </div>
 </div>
-
-<script>
-    function changeQuantity(value) {
-        let quantityInput = document.getElementById("quantity");
-        let currentValue = parseInt(quantityInput.value);
-        let maxTickets = parseInt(quantityInput.max);
-        
-        if (currentValue + value >= 1 && currentValue + value <= maxTickets) {
-            quantityInput.value = currentValue + value;
-        }
-    }
-    
-    // Hiển thị modal nếu hết vé
-    {% if event.tickets == 0 %}
-        var modal = new bootstrap.Modal(document.getElementById('outOfTicketsModal'));
-        modal.show();
-    {% endif %}
-</script>
 {% endblock %}
