@@ -22,6 +22,16 @@
                             <h4>{{ event.name }}</h4>
                         </a>
                         <p>{{ event.description|truncatechars:50 }}</p>
+                        <div class="card-text">
+                            <h9>
+                                Trạng thái: 
+                                {% if event.is_ended %}
+                                    <span style="color: red;">Đã kết thúc</span>
+                                {% else %}
+                                    <span style="color: green;">Sắp diễn ra</span>
+                                {% endif %}
+                            </h9>
+                        </div>
                     </div>
                 </div> 
             </div>

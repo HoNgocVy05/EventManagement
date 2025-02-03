@@ -13,7 +13,8 @@ class Event(models.Model):
     description = models.TextField()
     start_time = models.DateTimeField()
     tickets = models.PositiveIntegerField()
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    curr_tickets = models.PositiveIntegerField(default=0)
+    price = models.DecimalField(max_digits=10, decimal_places=3, default=0)
     image = models.ImageField(upload_to='events/', null=True, blank=True)
     is_ended = models.BooleanField(default=False)
 

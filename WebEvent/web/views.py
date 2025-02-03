@@ -123,10 +123,11 @@ def buyticket(request, event_id):
         quantity = int(request.POST.get('quantity'))
         total_price = event.price * quantity
 
-        if event.tickets < quantity:
+        if event.curr_tickets < quantity:
             return redirect('buyticket', event_id=event.id)
+        
+        event.curr_tickets -= quantity
 
-        event.tickets -= quantity
         event.save()
 
         tickets = []
