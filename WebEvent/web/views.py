@@ -125,7 +125,6 @@ def buyticket(request, event_id):
 
         if event.tickets < quantity:
             return redirect('buyticket', event_id=event.id)
-            return render(request, 'buytickets.html', {'event': event, 'out_of_tickets': True})
 
         event.tickets -= quantity
         event.save()
@@ -199,18 +198,18 @@ def search_events(request):
     return render(request, 'eventresult.html', {'events': events, 'query': query})
 
 def eventmanagement(request):
-    events = Event.objects.all()
+    if not request.user.is_staff:
+        return redirect("home")
 
     event_data = []
-    for event in events:
-        tickets = Ticket.objects.filter(event=event)
-        ticket_list = [{"user": ticket.user, "email": ticket.email, "phone_number": ticket.phone_number, "qr_code": ticket.qr_code, "created_at": ticket.created_at} for ticket in tickets]
-
+    for event in Event.objects.all():
+        tickets_sold = Ticket.objects.filter(event=event).count()
         event_data.append({
-            'event': event,
-            'tickets_sold': len(tickets),
-            'remaining_tickets': event.tickets - len(tickets),
-            'ticket_list': ticket_list
+            "event": event,
+            "total_tickets": event.tickets,
+            "tickets_sold": tickets_sold,
+            "remaining_tickets": max(event.tickets - tickets_sold, 0),
+            "ticket_list": Ticket.objects.filter(event=event),
         })
 
-    return render(request, 'eventmanagement.html', {'event_data': event_data})
+    return render(request, "eventmanagement.html", {"event_data": event_data})

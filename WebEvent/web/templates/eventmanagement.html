@@ -2,12 +2,13 @@
 {% block title %} Quản lý sự kiện {% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-4">
+<div class="container mt-5 mb-5">
     <div class="table-responsive">
-        <table class="table table-bordered rounded">
+        <table class="table table-bordered rounded overflow-hidden">
             <thead>
-                <tr class="table-dark">
+                <tr class="table-dark text-center">
                     <th>Tên sự kiện</th>
+                    <th class="text-nowrap">Tổng số vé</th>
                     <th class="text-nowrap">Số vé đã bán</th>
                     <th class="text-nowrap">Số vé còn lại</th>
                     <th class="text-nowrap">Trạng thái</th>
@@ -16,8 +17,9 @@
             </thead>
             <tbody>
                 {% for data in event_data %}
-                <tr class="table-secondary">
-                    <td>{{ data.event.name }}</td>
+                <tr class="table-secondary text-center">
+                    <td class="text-start"><strong>{{ data.event.name }}</strong></td>
+                    <td>{{ data.total_tickets }}</td>
                     <td>{{ data.tickets_sold }}</td>
                     <td>{{ data.remaining_tickets }}</td>
                     <td>
@@ -28,25 +30,28 @@
                         {% endif %}
                     </td>
                     <td>
-                        <button class="btn btn-info btn-dark" data-bs-toggle="collapse" data-bs-target="#tickets-{{ data.event.id }}">Xem</button>
+                        <button class="btn btn-dark toggle-btn" data-bs-toggle="collapse" data-bs-target="#tickets-{{ data.event.id }}">
+                            Xem
+                        </button>
                     </td>
                 </tr>
-                <tr id="tickets-{{ data.event.id }}" class="collapse">
-                    <td colspan="5">
-                        <ul>
+                <tr id="tickets-{{ data.event.id }}" class="collapse bg-white">
+                    <td colspan="6">
+                        <ul class="list-group">
                             {% for ticket in data.ticket_list %}
-                                <li>
-                                    <strong>{{ ticket.user.username }}</strong> - {{ ticket.email }} - Số điện thoại: {{ ticket.phone_number }} - QR Code: {{ ticket.qr_code }} - Mua vào: {{ ticket.created_at|date:"d/m/Y H:i" }}
+                                <li class="list-group-item">
+                                    <strong>{{ ticket.email }}</strong> - Số điện thoại: {{ ticket.phone_number }} - 
+                                    QR Code: {{ ticket.qr_code }} - Mua vào: {{ ticket.created_at|date:"d/m/Y H:i" }}
                                 </li>
                             {% empty %}
-                                <li>Chưa có vé được bán cho sự kiện này.</li>
+                                <li class="list-group-item text-muted">Chưa có vé được bán cho sự kiện này.</li>
                             {% endfor %}
                         </ul>
                     </td>
                 </tr>
                 {% empty %}
                     <tr>
-                        <td colspan="5">Không có sự kiện nào.</td>
+                        <td colspan="6" class="text-center">Không có sự kiện nào.</td>
                     </tr>
                 {% endfor %}
             </tbody>
