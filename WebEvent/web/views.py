@@ -1,11 +1,12 @@
 from web.models import User
+from django.contrib.auth.models import Group
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from .models import Event, Ticket
+from .models import Event, Ticket, Sponsor
 from django.utils.timezone import make_aware
 import uuid
 from django.core.mail import send_mail
@@ -29,15 +30,16 @@ def get_signup(request):
         confirm_psw = request.POST['confirm_psw']
         
         if password != confirm_psw:
-            return render(request, 'signup.html')
+            return render(request, 'signup.html', {"error_message": "Mật khẩu không khớp!"})
         
         if User.objects.filter(email=email).exists():
-            return render(request, 'signup.html')
+            return render(request, 'signup.html', {"error_message": "Email đã tồn tại!"})
         
         user = User(username=username, email=email, password=make_password(password))
         user.save()
         return redirect('login')
     return render(request, 'signup.html')
+
 
 def get_login(request):
     if request.method == 'POST':
@@ -47,13 +49,16 @@ def get_login(request):
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            return render(request, 'login.html')
+            return render(request, 'login.html', {"error_message": "Email không tồn tại!"})
+        
         if user.check_password(password):
             login(request, user)
             return redirect('index')
         else:
-            return render(request, 'login.html')
+            return render(request, 'login.html', {"error_message": "Mật khẩu không chính xác!"})
+    
     return render(request, 'login.html')
+
 
 def get_logout(request):
     logout(request)
@@ -199,11 +204,13 @@ def search_events(request):
     return render(request, 'eventresult.html', {'events': events, 'query': query})
 
 def eventmanagement(request):
-    if not request.user.is_staff:
-        return redirect("home")
+    if request.sponsor.exists():
+        events = Event.objects.filter(sponsor__user=request.user)
+    else:
+        events = Event.objects.all()
 
     event_data = []
-    for event in Event.objects.all():
+    for event in events:
         tickets_sold = Ticket.objects.filter(event=event).count()
         event_data.append({
             "event": event,
@@ -214,3 +221,30 @@ def eventmanagement(request):
         })
 
     return render(request, "eventmanagement.html", {"event_data": event_data})
+
+def addsponsor(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+
+    if request.method == "POST":
+        name = request.POST["name"]
+        email = request.POST["email"]
+        password = request.POST["password"]
+        confirm_psw = request.POST["confirm_password"]
+
+        if password != confirm_psw:
+            return render(request, "addsponsor.html", {"event": event, "error_message": "Mật khẩu không khớp!"})
+
+        if User.objects.filter(email=email).exists():
+            return render(request, "addsponsor.html", {"event": event, "error_message": "Email đã tồn tại!"})
+
+        sponsor_user = User.objects.create(
+            username=name,
+            email=email,
+            password=make_password(password)
+        )
+
+        Sponsor.objects.create(user=sponsor_user, event=event)
+
+        return redirect("eventdetail", event_id=event.id)
+
+    return render(request, "addsponsor.html", {"event": event})

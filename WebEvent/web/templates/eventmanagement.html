@@ -35,13 +35,13 @@
                         </button>
                     </td>
                 </tr>
-                <tr id="tickets-{{ data.event.id }}" class="collapse bg-white">
+                <tr id="tickets-{{ data.event.id }}" class="collapse bg-white" >
                     <td colspan="6">
                         <ul class="list-group">
                             {% for ticket in data.ticket_list %}
                                 <li class="list-group-item">
-                                    <strong>{{ ticket.email }}</strong> - Số điện thoại: {{ ticket.phone_number }} - 
-                                    QR Code: {{ ticket.qr_code }} - Mua vào: {{ ticket.created_at|date:"d/m/Y H:i" }}
+                                    <strong>Email:</strong> {{ ticket.email }}<strong> - Số điện thoại:</strong> {{ ticket.phone_number }} - 
+                                    <strong>QR Code:</strong> {{ ticket.qr_code }} <strong>- Mua vào lúc:</strong> {{ ticket.created_at|date:"d/m/Y H:i" }}
                                 </li>
                             {% empty %}
                                 <li class="list-group-item text-muted">Chưa có vé được bán cho sự kiện này.</li>
@@ -58,4 +58,5 @@
         </table>
     </div>
 </div>
+
 {% endblock %}

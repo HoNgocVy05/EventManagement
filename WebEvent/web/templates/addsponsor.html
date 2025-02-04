@@ -1,0 +1,42 @@
+{% extends "master.html" %}
+{% block title %}Thêm Nhà Tài Trợ{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="card col-md-6 mx-auto">
+        <div class="card-header text-center">
+            <h2 style="text-align = ">Thêm Nhà Tài Trợ Cho Sự Kiện <br> <strong>"{{ event.name }}" </strong></h2>
+        </div>
+        <div class="card-body">
+            <form action="{% url 'addsponsor' event.id %}" method="POST" class="mt-4">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="name" class="form-label">Tên Nhà Tài Trợ</label>
+                    <input type="text" class="form-control" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mật khẩu</label>
+                    <input type="password" class="form-control" name="password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="confirm_password" class="form-label">Xác nhận mật khẩu</label>
+                    <input type="password" class="form-control" name="confirm_password" required>
+                </div>
+                <button type="submit" class="btn btn-dark">Thêm Nhà Tài Trợ</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if error_message %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+                alert("{{ error_message }}");
+        });
+    </script>
+{% endif %}
+{% endblock %}

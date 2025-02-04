@@ -31,3 +31,10 @@ class Ticket(models.Model):
 
     def __str__(self):
         return f"Vé của {self.user.username} - {self.event.name}"
+    
+class Sponsor (models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username

@@ -25,9 +25,14 @@
             <button type="submit" class="btn-login">Đăng ký</button>
         </form>
     </div>
-    {% if error %}
-        <div class="error">{{ error }}</div>
+    {% if error_message %}
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                alert("{{ error_message }}");
+            });
+        </script>
     {% endif %}
+
 {% endblock %}
 
 {% block footer %}{% endblock %}
