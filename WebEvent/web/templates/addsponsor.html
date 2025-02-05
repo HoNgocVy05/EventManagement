@@ -8,43 +8,61 @@
             <h2>Thêm Nhà Tài Trợ Cho Sự Kiện <br> <strong>"{{ event.name }}"</strong></h2>
         </div>
         <div class="card-body">
-            <form action="{% url 'addsponsor' event.id %}" method="POST" class="mt-4">
-                {% csrf_token %}
+            <!-- Tabs Bootstrap -->
+            <ul class="nav nav-tabs custom-tabs" id="sponsorTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="existing-tab" data-bs-toggle="tab" data-bs-target="#existing" type="button" role="tab">
+                        Nhập Email Nhà Tài Trợ
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="new-tab" data-bs-toggle="tab" data-bs-target="#new" type="button" role="tab">
+                        Tạo Tài Khoản Nhà Tài Trợ Mới
+                    </button>
+                </li>
+            </ul>
 
-                <!-- Chọn sponsor có sẵn -->
-                <div class="mb-3">
-                    <label for="existing_sponsor" class="form-label">Chọn Nhà Tài Trợ Có Sẵn</label>
-                    <select class="form-select" name="existing_sponsor">
-                        <option value="">-- Chọn nhà tài trợ --</option>
-                        {% for sponsor in available_sponsors %}
-                            <option value="{{ sponsor.id }}">{{ sponsor.username }} - {{ sponsor.email }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <hr>
-                <p class="text-center">Hoặc thêm nhà tài trợ mới:</p>
-
-                <!-- Nhập thông tin sponsor mới -->
-                <div class="mb-3">
-                    <label for="name" class="form-label">Tên Nhà Tài Trợ</label>
-                    <input type="text" class="form-control" name="name">
-                </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" name="email">
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Mật khẩu</label>
-                    <input type="password" class="form-control" name="password">
-                </div>
-                <div class="mb-3">
-                    <label for="confirm_password" class="form-label">Xác nhận mật khẩu</label>
-                    <input type="password" class="form-control" name="confirm_password">
+            <div class="tab-content mt-3" id="sponsorTabsContent">
+                <!-- Tab nhập email nhà tài trợ -->
+                <div class="tab-pane fade show active" id="existing" role="tabpanel">
+                    <form action="{% url 'addsponsor' event.id %}" method="POST" class="mt-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="sponsor_email" class="form-label">Nhập Email Nhà Tài Trợ</label>
+                            <input type="email" class="form-control" name="sponsor_email" id="sponsor_email" data-url="{% url 'checksponsor' %}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="sponsor_name" class="form-label">Tên Nhà Tài Trợ</label>
+                            <input type="text" class="form-control" id="sponsor_name" disabled>
+                        </div>
+                        <button type="submit" class="btn btn-dark">Thêm Nhà Tài Trợ</button>
+                    </form>
                 </div>
 
-                <button type="submit" class="btn btn-dark">Thêm Nhà Tài Trợ</button>
-            </form>
+                <!-- Tab tạo tài khoản sponsor mới -->
+                <div class="tab-pane fade" id="new" role="tabpanel">
+                    <form action="{% url 'addsponsor' event.id %}" method="POST" class="mt-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Tên Nhà Tài Trợ</label>
+                            <input type="text" class="form-control" name="name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Mật khẩu</label>
+                            <input type="password" class="form-control" name="password">
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">Xác nhận mật khẩu</label>
+                            <input type="password" class="form-control" name="confirm_password">
+                        </div>
+                        <button type="submit" class="btn btn-dark">Tạo Nhà Tài Trợ</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -59,4 +77,11 @@
         });
     </script>
 {% endif %}
+
+<style>
+    .custom-tabs .nav-link {
+        color: black;
+    }
+</style>
+
 {% endblock %}

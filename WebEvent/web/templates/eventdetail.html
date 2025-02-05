@@ -28,12 +28,12 @@
                 {% if not event.is_ended %}
                   {% if user.is_authenticated %}
                       {% if out_of_tickets %}
-                          <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#outOfTicketsModal">Mua vé</button>
+                          <button class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#outOfTicketsModal">Mua vé</button>
                       {% else %}
                           <a href="{% url 'buyticket' event.id %}" class="btn btn-danger me-2">Mua vé</a>
                       {% endif %}
                   {% else %}
-                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#loginRequiredModal">Mua vé</button>
+                    <button class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#loginRequiredModal">Mua vé</button>
                   {% endif %}
                 {% endif %}
             

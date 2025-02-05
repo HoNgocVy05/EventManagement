@@ -3,6 +3,7 @@
 
 {% block title %}Đăng nhập{% endblock %}
 
+{% block navbar %}{% endblock %}
 {% block content %}
     <div class="bg-img">
         <form action="{% url 'login' %}" method="POST" class="container-login">
@@ -31,6 +32,8 @@
             });
         </script>
     {% endif %}
+
+    {% block footer %}{% endblock %}
 {% endblock %}
 
 

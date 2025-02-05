@@ -23,6 +23,7 @@ urlpatterns = [
     path('search/', views.search_events, name='search_events'),
     path('event-management/', views.eventmanagement, name='eventmanagement'),
     path("addsponsor/<int:event_id>/", views.addsponsor, name="addsponsor"),
+    path("check-sponsor/", views.checksponsor, name="checksponsor"),
 ]
 
 if settings.DEBUG:

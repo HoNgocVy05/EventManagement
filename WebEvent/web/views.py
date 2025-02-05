@@ -127,14 +127,10 @@ def buyticket(request, event_id):
         phone_number = request.POST.get('phone_number')
         quantity = int(request.POST.get('quantity'))
         total_price = event.price * quantity
-
         if event.curr_tickets < quantity:
             return redirect('buyticket', event_id=event.id)
-        
         event.curr_tickets -= quantity
-
         event.save()
-
         tickets = []
         for _ in range(quantity):
             qr_code = str(uuid.uuid4())[:8]
@@ -146,17 +142,14 @@ def buyticket(request, event_id):
                 qr_code=qr_code
             )
             tickets.append(ticket)
-
         ticket_details = "".join([
             f"<p><strong>Vé:</strong> {t.qr_code}</p>"
             f'<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={t.qr_code}" alt="QR Code">'
             for t in tickets
         ])
-
         subject = "Xác nhận mua vé"
         from_email = "hna.191081@gmail.com"
         to_email = [email]
-
         mailcontent = format_html(f"""
             <html>
             <body>
@@ -171,13 +164,10 @@ def buyticket(request, event_id):
             </body>
             </html>
         """)
-
         email_message = EmailMultiAlternatives(subject, "Bạn đã mua vé thành công.", from_email, to_email)
         email_message.attach_alternative(mailcontent, "text/html")
         email_message.send()
-
-        return redirect('yourtickets')
-    
+        return redirect('yourtickets')   
     return render(request, 'buytickets.html', {'event': event})
 
 def yourtickets(request):
@@ -193,25 +183,20 @@ def introduction(request):
     return render(request, 'introduction.html')
 
 def search_events(request):
-    query = request.GET.get('q', '').strip()
-    
+    query = request.GET.get('q', '').strip()   
     if request.GET.get('ajax'):
         events = Event.objects.filter(name__icontains=query)[:5] if query else []
         data = [{"id": event.id, "name": event.name, "description": event.description} for event in events]
         return JsonResponse(data, safe=False)
-
     events = Event.objects.filter(name__icontains=query) if query else []
     return render(request, 'eventresult.html', {'events': events, 'query': query})
 
 def eventmanagement(request):
     is_sponsor = Sponsor.objects.filter(user=request.user).exists()
-
     if is_sponsor:
         events = Event.objects.filter(event_sponsors__user=request.user)
     else:
         events = Event.objects.all()
-
-
     event_data = []
     for event in events:
         sponsors = event.sponsors.all()
@@ -224,73 +209,84 @@ def eventmanagement(request):
             "remaining_tickets": max(event.tickets - tickets_sold, 0),
             "ticket_list": Ticket.objects.filter(event=event),
         })
-
-
     return render(request, "eventmanagement.html", {"event_data": event_data})
 
 def addsponsor(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    
-    # Lấy danh sách các sponsor đã tài trợ cho sự kiện này
-    existing_sponsors = Sponsor.objects.filter(event=event).values_list("user", flat=True)
-    
-    # Lấy các tài khoản user đã là sponsor ở các sự kiện khác, không phải khách hàng
+    event = get_object_or_404(Event, id=event_id)  
+    existing_sponsors = Sponsor.objects.filter(event=event).values_list("user", flat=True)   
     available_sponsors = User.objects.filter(sponsor__isnull=False).exclude(id__in=existing_sponsors)
-
     if request.method == "POST":
-        # Kiểm tra nếu có chọn sponsor từ danh sách
-        sponsor_id = request.POST.get("sponsor_id")
-        if sponsor_id:
-            sponsor_user = User.objects.get(id=sponsor_id)
+        sponsor_email = request.POST.get("sponsor_email")
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        confirm_psw = request.POST.get("confirm_password")
+        if sponsor_email:
+            sponsor_user = User.objects.filter(email=sponsor_email).first()
+            if not sponsor_user:
+                return render(request, "addsponsor.html", {
+                    "event": event,
+                    "error_message": "Email không tồn tại trong hệ thống!"
+                })     
+            if Sponsor.objects.filter(user=sponsor_user, event=event).exists():
+                return render(request, "addsponsor.html", {"event": event, "error_message": "Tài khoản này đã tồn tại trong danh sách nhà tại trợ cho sự kiện này!"})
+
             Sponsor.objects.create(user=sponsor_user, event=event)
-            return redirect("eventdetail", event_id=event.id)
+            send_sponsor_email(sponsor_user, event, existing=True)
 
-        # Nếu là thêm sponsor mới
-        name = request.POST["name"]
-        email = request.POST["email"]
-        password = request.POST["password"]
-        confirm_psw = request.POST["confirm_password"]
+        else:
+            if password != confirm_psw:
+                return render(request, "addsponsor.html", {"event": event, "error_message": "Mật khẩu không khớp!"})
+            if User.objects.filter(email=email).exists():
+                return render(request, "addsponsor.html", {"event": event, "error_message": "Email đã tồn tại!"})
+            if User.objects.filter(username=name).exists():
+                return render(request, "addsponsor.html", {"event": event, "error_message": "Tên đã tồn tại!"})
+            sponsor_user = User.objects.create(
+                username=name,
+                email=email,
+                password=make_password(password)
+            )
+            Sponsor.objects.create(user=sponsor_user, event=event)
+            send_sponsor_email(sponsor_user, event, password)
+        return redirect("eventdetail", event_id=event.id)
+    return render(request, "addsponsor.html", {"event": event, "available_sponsors": available_sponsors})
 
-        if password != confirm_psw:
-            return render(request, "addsponsor.html", {"event": event, "error_message": "Mật khẩu không khớp!"})
-
-        if User.objects.filter(email=email).exists():
-            return render(request, "addsponsor.html", {"event": event, "error_message": "Email đã tồn tại!"})
-        
-        if User.objects.filter(username=name).exists():
-            return render(request, "addsponsor.html", {"event": event, "error_message": "Tên đã tồn tại!"})
-
-        sponsor_user = User.objects.create(
-            username=name,
-            email=email,
-            password=make_password(password)
-        )
-
-        Sponsor.objects.create(user=sponsor_user, event=event)
-
-        # Gửi email thông báo
-        subject = "Bạn đã trở thành nhà tài trợ sự kiện tại EVENTHUB"
-        from_email = "hna.191081@gmail.com"
-        to_email = [email]
-
+def send_sponsor_email(user, event, password=None, existing=False):
+    subject = "Bạn đã trở thành nhà tài trợ sự kiện tại EVENTHUB"
+    from_email = "hna.191081@gmail.com"
+    to_email = [user.email]
+    if existing:
         mailcontent = format_html(f"""
             <html>
             <body>
-                <h2 style="color: #2c3e50;">Kính chào {name},</h2>
+                <h2 style="color: #2c3e50;">Kính chào {user.username},</h2>
                 <p>Bạn đã được thêm làm nhà tài trợ cho sự kiện <strong>{event.name}</strong>.</p>
-                <p>Dưới đây là thông tin tài khoản của bạn:</p>
-                <p><strong>Email:</strong> {email}</p>
-                <p><strong>Mật khẩu:</strong> {password}</p>
-                <p>Bạn có thể đăng nhập bằng tài khoản trên để xem báo cáo về sự kiện.</p>
+                <p>Bạn có thể đăng nhập vào hệ thống bằng tài khoản chúng tôi cung cấp trước đó để xem báo cáo sự kiện. <br>Nếu quên mật khẩu, hãy liên hệ qua <strong>hna.191081@gmail.com<strong> để được hỗ trợ</p>
                 <p style="margin-top:20px; color:#666;">Trân trọng,<br>Ban tổ chức sự kiện</p>
             </body>
             </html>
         """)
+    else:
+        mailcontent = format_html(f"""
+            <html>
+            <body>
+                <h2 style="color: #2c3e50;">Kính chào {user.username},</h2>
+                <p>Bạn đã được tạo tài khoản và trở thành nhà tài trợ cho sự kiện <strong>{event.name}</strong>.</p>
+                <p><strong>Email:</strong> {user.email}</p>
+                <p><strong>Mật khẩu:</strong> {password}</p>
+                <p>Bạn có thể đăng nhập vào hệ thống để xem báo cáo sự kiện.</p>
+                <p style="margin-top:20px; color:#666;">Trân trọng,<br>Ban tổ chức sự kiện</p>
+            </body>
+            </html>
+        """)
+    email_message = EmailMultiAlternatives(subject, "Thông báo tài trợ sự kiện", from_email, to_email)
+    email_message.attach_alternative(mailcontent, "text/html")
+    email_message.send()
 
-        email_message = EmailMultiAlternatives(subject, "Thông báo tài trợ sự kiện", from_email, to_email)
-        email_message.attach_alternative(mailcontent, "text/html")
-        email_message.send()
-
-        return redirect("eventdetail", event_id=event.id)
-
-    return render(request, "addsponsor.html", {"event": event, "available_sponsors": available_sponsors})
+def checksponsor(request):
+    email = request.GET.get("email", "").strip()
+    try:
+        sponsor = User.objects.get(email=email)
+        return JsonResponse({"exists": True, "name": sponsor.username})
+    except User.DoesNotExist:
+        return JsonResponse({"exists": False})
