@@ -8,6 +8,7 @@ class User(AbstractUser):
         return self.username
     def is_sponsor(self):
         return hasattr(self, "sponsor")
+    
 User = get_user_model()
 
 class Event(models.Model):
@@ -19,6 +20,7 @@ class Event(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=3, default=0)
     image = models.ImageField(upload_to='events/', null=True, blank=True)
     is_ended = models.BooleanField(default=False)
+    sponsors = models.ManyToManyField('Sponsor', related_name="events")
 
     def __str__(self):
         return self.name
@@ -35,8 +37,11 @@ class Ticket(models.Model):
         return f"Vé của {self.user.username} - {self.event.name}"
     
 class Sponsor (models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="event_sponsors")
+
+    class Meta:
+        unique_together = ('user', 'event')
 
     def __str__(self):
-        return self.user.username
+        return f"{self.user.username} - {self.event.name}"

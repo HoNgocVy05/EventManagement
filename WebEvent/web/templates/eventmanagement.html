@@ -3,6 +3,7 @@
 
 {% block content %}
 <div class="container mt-5 mb-5">
+    <h3>Bảng thống kê vé của sự kiện</h3>
     <div class="table-responsive">
         <table class="table table-bordered rounded overflow-hidden">
             <thead>
@@ -59,4 +60,48 @@
     </div>
 </div>
 
+{% if user.is_authenticated and user.is_staff %}
+<div class="container mt-5 mb-5">
+    <h3>Bảng quản lý nhà tài trợ cho sự kiện</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered rounded overflow-hidden">
+            <thead>
+                <tr class="table-dark text-center">
+                    <th>Tên sự kiện</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in event_data %}
+                <tr class="table-secondary text-center">
+                    <td class="text-start"><strong>{{ data.event.name }}</strong></td>
+                    <td>
+                        <button class="btn btn-dark toggle-btn" data-bs-toggle="collapse" data-bs-target="#tickets-{{ data.event.id }}">
+                            Xem danh sách nhà tài trợ
+                        </button>
+                    </td>
+                </tr>
+                <tr id="tickets-{{ data.event.id }}" class="collapse bg-white" >
+                    <td colspan="6">
+                        <ul class="list-group">
+                            {% for sponsor in data.sponsors %}
+                                <li class="list-group-item">
+                                    <strong>Tên:</strong> {{ sponsor.user.username }}<strong> - Email:</strong> {{ sponsor.user.email }}
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item text-muted">Chưa có nhà tài trợ cho sự kiện này.</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">Không có sự kiện nào.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

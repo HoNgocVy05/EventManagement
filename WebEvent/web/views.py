@@ -207,27 +207,45 @@ def eventmanagement(request):
     is_sponsor = Sponsor.objects.filter(user=request.user).exists()
 
     if is_sponsor:
-        events = Event.objects.filter(sponsor__user=request.user)
+        events = Event.objects.filter(event_sponsors__user=request.user)
     else:
         events = Event.objects.all()
 
+
     event_data = []
     for event in events:
+        sponsors = event.sponsors.all()
         tickets_sold = Ticket.objects.filter(event=event).count()
         event_data.append({
             "event": event,
+            "sponsors": event.event_sponsors.all(),
             "total_tickets": event.tickets,
             "tickets_sold": tickets_sold,
             "remaining_tickets": max(event.tickets - tickets_sold, 0),
             "ticket_list": Ticket.objects.filter(event=event),
         })
 
+
     return render(request, "eventmanagement.html", {"event_data": event_data})
 
 def addsponsor(request, event_id):
     event = get_object_or_404(Event, id=event_id)
+    
+    # Lấy danh sách các sponsor đã tài trợ cho sự kiện này
+    existing_sponsors = Sponsor.objects.filter(event=event).values_list("user", flat=True)
+    
+    # Lấy các tài khoản user đã là sponsor ở các sự kiện khác, không phải khách hàng
+    available_sponsors = User.objects.filter(sponsor__isnull=False).exclude(id__in=existing_sponsors)
 
     if request.method == "POST":
+        # Kiểm tra nếu có chọn sponsor từ danh sách
+        sponsor_id = request.POST.get("sponsor_id")
+        if sponsor_id:
+            sponsor_user = User.objects.get(id=sponsor_id)
+            Sponsor.objects.create(user=sponsor_user, event=event)
+            return redirect("eventdetail", event_id=event.id)
+
+        # Nếu là thêm sponsor mới
         name = request.POST["name"]
         email = request.POST["email"]
         password = request.POST["password"]
@@ -238,6 +256,9 @@ def addsponsor(request, event_id):
 
         if User.objects.filter(email=email).exists():
             return render(request, "addsponsor.html", {"event": event, "error_message": "Email đã tồn tại!"})
+        
+        if User.objects.filter(username=name).exists():
+            return render(request, "addsponsor.html", {"event": event, "error_message": "Tên đã tồn tại!"})
 
         sponsor_user = User.objects.create(
             username=name,
@@ -247,7 +268,8 @@ def addsponsor(request, event_id):
 
         Sponsor.objects.create(user=sponsor_user, event=event)
 
-        subject = "Bạn đã trở thành nhà tài trợ sự kiện"
+        # Gửi email thông báo
+        subject = "Bạn đã trở thành nhà tài trợ sự kiện tại EVENTHUB"
         from_email = "hna.191081@gmail.com"
         to_email = [email]
 
@@ -271,4 +293,4 @@ def addsponsor(request, event_id):
 
         return redirect("eventdetail", event_id=event.id)
 
-    return render(request, "addsponsor.html", {"event": event})
+    return render(request, "addsponsor.html", {"event": event, "available_sponsors": available_sponsors})

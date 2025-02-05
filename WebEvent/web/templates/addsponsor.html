@@ -5,27 +5,44 @@
 <div class="container mt-5 mb-5">
     <div class="card col-md-6 mx-auto">
         <div class="card-header text-center">
-            <h2 style="text-align = ">Thêm Nhà Tài Trợ Cho Sự Kiện <br> <strong>"{{ event.name }}" </strong></h2>
+            <h2>Thêm Nhà Tài Trợ Cho Sự Kiện <br> <strong>"{{ event.name }}"</strong></h2>
         </div>
         <div class="card-body">
             <form action="{% url 'addsponsor' event.id %}" method="POST" class="mt-4">
                 {% csrf_token %}
+
+                <!-- Chọn sponsor có sẵn -->
+                <div class="mb-3">
+                    <label for="existing_sponsor" class="form-label">Chọn Nhà Tài Trợ Có Sẵn</label>
+                    <select class="form-select" name="existing_sponsor">
+                        <option value="">-- Chọn nhà tài trợ --</option>
+                        {% for sponsor in available_sponsors %}
+                            <option value="{{ sponsor.id }}">{{ sponsor.username }} - {{ sponsor.email }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <hr>
+                <p class="text-center">Hoặc thêm nhà tài trợ mới:</p>
+
+                <!-- Nhập thông tin sponsor mới -->
                 <div class="mb-3">
                     <label for="name" class="form-label">Tên Nhà Tài Trợ</label>
-                    <input type="text" class="form-control" name="name" required>
+                    <input type="text" class="form-control" name="name">
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" name="email" required>
+                    <input type="email" class="form-control" name="email">
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Mật khẩu</label>
-                    <input type="password" class="form-control" name="password" required>
+                    <input type="password" class="form-control" name="password">
                 </div>
                 <div class="mb-3">
                     <label for="confirm_password" class="form-label">Xác nhận mật khẩu</label>
-                    <input type="password" class="form-control" name="confirm_password" required>
+                    <input type="password" class="form-control" name="confirm_password">
                 </div>
+
                 <button type="submit" class="btn btn-dark">Thêm Nhà Tài Trợ</button>
             </form>
         </div>
