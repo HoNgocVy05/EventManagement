@@ -72,6 +72,8 @@ def add_edit_event(request, event_id=None):
     event = None
     if event_id:
         event = get_object_or_404(Event, id=event_id)
+    else:
+        is_new_event = True 
     if request.method == 'POST':
         name = request.POST['name']
         description = request.POST['description']
@@ -97,8 +99,38 @@ def add_edit_event(request, event_id=None):
                 price=price
             )
         event.save()
+        if is_new_event:
+            promotionemail(event)
         return redirect('index')
     return render(request, 'add-edit-event.html', {'event': event})
+
+def promotionemail(event):
+    subject = "Sự kiện mới trên EVENTHUB"
+    from_email = "hna.191081@gmail.com"
+    
+    users = User.objects.all().values_list('email', flat=True)  
+    recipient_list = list(users)
+
+    if recipient_list:  
+        mailcontent = format_html(f"""
+            <html>
+            <body>
+                <h2 style="color: #2c3e50;">{event.name}</h2>
+                <p><strong>Thời gian:</strong> {event.start_time}</p>
+                <p><strong>Giá vé:</strong> {'Miễn phí' if event.price == 0 else f"{event.price} VNĐ"}</p>
+                <p>Có thể bạn sẽ quan tâm đến sự kiện này.</p>
+                <p><a href="http://127.0.0.1:8000/event/{event.id}" 
+                      style="background-color: #333333; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+                      Xem Chi Tiết Sự Kiện Tại Đây
+                   </a></p>
+                <p style="margin-top:20px; color:#666;">Trân trọng,<br>EVENTHUB</p>
+            </body>
+            </html>
+        """)
+
+        email_message = EmailMultiAlternatives(subject, "Sự kiện mới!", from_email, bcc=recipient_list)
+        email_message.attach_alternative(mailcontent, "text/html")
+        email_message.send()
 
 def endevent(request, event_id):
     event = get_object_or_404(Event, id=event_id)
