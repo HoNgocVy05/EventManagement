@@ -204,7 +204,9 @@ def search_events(request):
     return render(request, 'eventresult.html', {'events': events, 'query': query})
 
 def eventmanagement(request):
-    if request.sponsor.exists():
+    is_sponsor = Sponsor.objects.filter(user=request.user).exists()
+
+    if is_sponsor:
         events = Event.objects.filter(sponsor__user=request.user)
     else:
         events = Event.objects.all()
@@ -244,6 +246,28 @@ def addsponsor(request, event_id):
         )
 
         Sponsor.objects.create(user=sponsor_user, event=event)
+
+        subject = "Bạn đã trở thành nhà tài trợ sự kiện"
+        from_email = "hna.191081@gmail.com"
+        to_email = [email]
+
+        mailcontent = format_html(f"""
+            <html>
+            <body>
+                <h2 style="color: #2c3e50;">Kính chào {name},</h2>
+                <p>Bạn đã được thêm làm nhà tài trợ cho sự kiện <strong>{event.name}</strong>.</p>
+                <p>Dưới đây là thông tin tài khoản của bạn:</p>
+                <p><strong>Email:</strong> {email}</p>
+                <p><strong>Mật khẩu:</strong> {password}</p>
+                <p>Bạn có thể đăng nhập bằng tài khoản trên để xem báo cáo về sự kiện.</p>
+                <p style="margin-top:20px; color:#666;">Trân trọng,<br>Ban tổ chức sự kiện</p>
+            </body>
+            </html>
+        """)
+
+        email_message = EmailMultiAlternatives(subject, "Thông báo tài trợ sự kiện", from_email, to_email)
+        email_message.attach_alternative(mailcontent, "text/html")
+        email_message.send()
 
         return redirect("eventdetail", event_id=event.id)
 

@@ -6,6 +6,8 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     def __str__(self):
         return self.username
+    def is_sponsor(self):
+        return hasattr(self, "sponsor")
 User = get_user_model()
 
 class Event(models.Model):

@@ -30,7 +30,7 @@
                       {% if out_of_tickets %}
                           <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#outOfTicketsModal">Mua vé</button>
                       {% else %}
-                          <a href="{% url 'buyticket' event.id %}" class="btn btn-danger me-2 mb-3">Mua vé</a>
+                          <a href="{% url 'buyticket' event.id %}" class="btn btn-danger me-2">Mua vé</a>
                       {% endif %}
                   {% else %}
                     <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#loginRequiredModal">Mua vé</button>
@@ -38,15 +38,14 @@
                 {% endif %}
             
                 {% if user.is_authenticated and user.is_staff %}
-                    <a href="{% url 'event' event.id %}" class="btn btn-dark">Sửa sự kiện</a>
+                    <a href="{% url 'event' event.id %}" class="btn btn-dark">Sửa</a>
                     {% if not event.is_ended %}
-                        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmEndEventModal">Kết thúc sự kiện</button>
+                        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmEndEventModal">Kết thúc</button>
                     {% endif %}
-                        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmDeleteEventModal">Xóa sự kiện</button>
-                {% endif %}
-
-                {% if not event.is_ended %}
-                  <a href="{% url 'addsponsor' event.id %}" class="btn btn-dark">Thêm nhà tài trợ</a>
+                        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#confirmDeleteEventModal">Xóa</button>
+                        {% if not event.is_ended %}
+                        <a href="{% url 'addsponsor' event.id %}" class="btn btn-dark">Thêm nhà tài trợ</a>
+                      {% endif %}
                 {% endif %}
             </div>
             <div class="mt-3">

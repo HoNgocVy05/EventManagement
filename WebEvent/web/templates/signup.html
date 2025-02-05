@@ -3,8 +3,6 @@
 
 {% block title %}Đăng ký{% endblock %}
 
-{% block navbar %}{% endblock %}
-
 {% block content %}
     <div class="bg-img">
         <form action="{% url 'signup' %}" class="container-login" method="POST">
@@ -25,14 +23,16 @@
             <button type="submit" class="btn-login">Đăng ký</button>
         </form>
     </div>
+    
     {% if error_message %}
         <script>
             document.addEventListener("DOMContentLoaded", function() {
-                alert("{{ error_message }}");
+                setTimeout(function() {
+                    alert("{{ error_message }}");
+                }, 100);
+                history.replaceState({}, document.title, window.location.pathname);
             });
         </script>
     {% endif %}
 
 {% endblock %}
-
-{% block footer %}{% endblock %}
