@@ -6,7 +6,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from .models import Event, Ticket, Sponsor
+from .models import Event, Ticket, Sponsor, Attended, Survey
 from django.utils.timezone import make_aware
 import uuid
 from django.core.mail import send_mail
@@ -14,7 +14,6 @@ from django.core.mail import EmailMultiAlternatives
 from django.utils.html import format_html
 from django.http import JsonResponse
 
-# Create your views here.
 def get_index(request):
     events = Event.objects.all()
     if request.method == "POST":
@@ -69,6 +68,7 @@ def profile(request):
     return render(request, 'profile.html', {'user': user})
 
 def add_edit_event(request, event_id=None):
+    is_new_event = False
     event = None
     if event_id:
         event = get_object_or_404(Event, id=event_id)
@@ -148,9 +148,14 @@ def deleteevent(request, event_id):
 
 def eventdetail(request, event_id):
     event = get_object_or_404(Event, id=event_id)
+    user_has_ticket = Ticket.objects.filter(event=event, email=request.user.email).exists()
+
     out_of_tickets = event.tickets <= 0
     context = {'event': event,}
-    return render(request, 'eventdetail.html', {'event': event, 'out_of_tickets': out_of_tickets})
+    return render(request, 'eventdetail.html', {
+        'event': event, 
+        'out_of_tickets': out_of_tickets, 
+        'user_has_ticket': user_has_ticket})
 
 def buyticket(request, event_id):
     event = get_object_or_404(Event, id=event_id)
@@ -159,9 +164,9 @@ def buyticket(request, event_id):
         phone_number = request.POST.get('phone_number')
         quantity = int(request.POST.get('quantity'))
         total_price = event.price * quantity
-        if event.curr_tickets < quantity:
+        if event.tickets < quantity:
             return redirect('buyticket', event_id=event.id)
-        event.curr_tickets -= quantity
+        event.tickets -= quantity
         event.save()
         tickets = []
         for _ in range(quantity):
@@ -322,3 +327,71 @@ def checksponsor(request):
         return JsonResponse({"exists": True, "name": sponsor.username})
     except User.DoesNotExist:
         return JsonResponse({"exists": False})
+    
+def checkticket(request, event_id):
+    if request.method == 'POST':
+        ticket_code = request.POST.get('ticket_code')
+        event = get_object_or_404(Event, id=event_id)
+        ticket = Ticket.objects.filter(code=ticket_code, event=event).first()
+        if ticket:
+            if ticket.is_used:
+                return JsonResponse({'status': 'failed', 'message': 'Mã vé đã được sử dụng'})
+            ticket.is_used = True
+            ticket.save()
+            if not Attended.objects.filter(event=event, email=ticket.email).exists():
+                Attended.objects.create(event=event, email=ticket.email)
+            return JsonResponse({'status': 'success', 'message': 'Check-in thành công'}) 
+        return JsonResponse({'status': 'failed', 'message': 'Mã vé không tồn tại trong sự kiện'})
+    return render(request, 'checkticket.html', {'event_id': event_id})
+
+def sendSurveyEmail(request, event):
+    subject = "Cảm ơn bạn đã tham gia sự kiện!"
+    from_email = "hna.191081@gmail.com"
+    attended_emails = Attended.objects.filter(event=event).values_list('email', flat=True)
+    recipient_list = list(attended_emails)
+    if recipient_list:
+        mailcontent = format_html(f"""
+            <html>
+            <body>
+                <h2 style="color: #2c3e50;">Cảm ơn bạn đã tham gia sự kiện {event.name}</h2>
+                <p>Chúng tôi rất mong nhận được phản hồi của bạn để cải thiện các sự kiện sau này.</p>
+                <p>Vui lòng dành ít phút để đánh giá sự kiện tại đây:</p>
+                <p><a href="http://127.0.0.1:8000/survey/{event.id}?email={{email}}"
+                      style="background-color: #333333; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+                      Đánh giá sự kiện
+                   </a></p>
+                <p style="margin-top:20px; color:#666;">Trân trọng,<br>EVENTHUB</p>
+            </body>
+            </html>
+        """)
+        for email in recipient_list:
+            email_message = EmailMultiAlternatives(subject, "Cảm ơn bạn đã tham gia!", from_email, bcc=recipient_list)
+            email_message.attach_alternative(mailcontent.format(email=email), "text/html")
+            email_message.send()
+
+def surveyView(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    rating_range = range(1, 6)
+    email = request.GET.get('email')
+    if request.method == 'POST':
+        rating_1 = request.POST['rating_1']
+        rating_2 = request.POST['rating_2']
+        rating_3 = request.POST['rating_3']
+        feedback = request.POST['feedback']
+        Survey.objects.create(
+            event=event,
+            email=email,
+            rating_1=rating_1,
+            rating_2=rating_2,
+            rating_3=rating_3,
+            feedback=feedback
+        )
+        return redirect('thank_you')
+    return render(request, 'surveyform.html', {
+        'event': event, 
+        'email': email, 
+        'rating_range': rating_range
+    })
+
+def thankyou(request):
+    return render(request, 'thankyou.html')

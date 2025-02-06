@@ -1,11 +1,11 @@
 {% extends 'master.html' %}
 {% block content %}
 <div class="container mt-5">
-    <h2 class="text-center mb-4">Vé của bạn</h2>
-    <div class="row">
+    <h2 class="text-center mb-4">Vé của các sự kiện bạn đã mua</h2>
+    <div class="row row-cols-1 row-cols-md-4 g-4">
         {% for ticket in tickets %}
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm p-4 text-center">
+            <div class="col">
+                <div class="card shadow-sm h-100 p-4 text-center">
                     <h4 class="mb-3"><strong>{{ ticket.event.name }}</strong></h4>
                     <p><strong>Thời gian:</strong> {{ ticket.event.start_time|date:"d/m/Y H:i" }}</p>
                     <p class="mb-3">Cảm ơn bạn đã tham gia sự kiện của chúng tôi!</p>
@@ -21,7 +21,7 @@
         {% empty %}
             <p class="text-center">Bạn chưa mua vé nào.</p>
         {% endfor %}
-        <h8 class="mb-4">Lưu ý: Khi sự kiện kết thúc hoặc bị xóa, vé của bạn sẽ không còn hiển thị trong trang này !</h8>
     </div>
+    <p class="text-center mt-3"><small>Lưu ý: Khi sự kiện kết thúc hoặc bị xóa khỏi trang web, vé của bạn cũng sẽ bị mất và không còn hiển thị trong trang này!</small></p>
 </div> 
 {% endblock %}

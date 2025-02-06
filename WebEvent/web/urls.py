@@ -24,6 +24,9 @@ urlpatterns = [
     path('event-management/', views.eventmanagement, name='eventmanagement'),
     path("addsponsor/<int:event_id>/", views.addsponsor, name="addsponsor"),
     path("check-sponsor/", views.checksponsor, name="checksponsor"),
+    path('survey/<int:event_id>/', views.surveyView, name='surveyView'),
+    path('thank-you/', views.thankyou, name='thank_you'), 
+    path('check-ticket/<int:event_id>/', views.checkticket, name='checkticket'),
 ]
 
 if settings.DEBUG:

@@ -1,0 +1,21 @@
+{% extends "master.html" %}
+
+{% block navbar %}{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h2 class="display-4">Gửi đánh giá thành công</h2>
+    </div>
+    <div class="card shadow-lg p-4">
+        <h4 class="text-center mb-4">Cảm ơn bạn vì đã dành thời gian để chia sẻ cảm nhận của mình!</h4>
+        <p class="text-center">Chúng tôi sẽ cải thiện các sự kiện trong tương lai dựa trên phản hồi của bạn.</p>
+        
+        <div class="mt-4 text-center">
+            <a href="{%url 'index' %}" class="btn btn-dark btn-lg">Quay lại trang chủ</a>
+        </div>
+    </div>
+</div>
+
+{% block footer %}{% endblock %}
+
+{% endblock %}
