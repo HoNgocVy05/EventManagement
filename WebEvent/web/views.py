@@ -137,6 +137,7 @@ def endevent(request, event_id):
     event.is_ended = True
     event.status = 'Completed'
     Ticket.objects.filter(event=event).delete()
+    sendSurveyEmail(event)
     event.save()
     return redirect('eventdetail', event_id=event.id)
 
@@ -330,9 +331,9 @@ def checksponsor(request):
     
 def checkticket(request, event_id):
     if request.method == 'POST':
-        ticket_code = request.POST.get('ticket_code')
+        qr_code = request.POST.get('qr_code', '').strip()  # Đổi thành qr_code
         event = get_object_or_404(Event, id=event_id)
-        ticket = Ticket.objects.filter(code=ticket_code, event=event).first()
+        ticket = Ticket.objects.filter(qr_code=qr_code, event=event).first()
         if ticket:
             if ticket.is_used:
                 return JsonResponse({'status': 'failed', 'message': 'Mã vé đã được sử dụng'})
@@ -340,34 +341,38 @@ def checkticket(request, event_id):
             ticket.save()
             if not Attended.objects.filter(event=event, email=ticket.email).exists():
                 Attended.objects.create(event=event, email=ticket.email)
-            return JsonResponse({'status': 'success', 'message': 'Check-in thành công'}) 
+            return JsonResponse({'status': 'success', 'message': 'Check-in thành công'})
         return JsonResponse({'status': 'failed', 'message': 'Mã vé không tồn tại trong sự kiện'})
     return render(request, 'checkticket.html', {'event_id': event_id})
 
-def sendSurveyEmail(request, event):
+
+
+def sendSurveyEmail(event):
     subject = "Cảm ơn bạn đã tham gia sự kiện!"
     from_email = "hna.191081@gmail.com"
     attended_emails = Attended.objects.filter(event=event).values_list('email', flat=True)
     recipient_list = list(attended_emails)
+
     if recipient_list:
-        mailcontent = format_html(f"""
-            <html>
-            <body>
-                <h2 style="color: #2c3e50;">Cảm ơn bạn đã tham gia sự kiện {event.name}</h2>
-                <p>Chúng tôi rất mong nhận được phản hồi của bạn để cải thiện các sự kiện sau này.</p>
-                <p>Vui lòng dành ít phút để đánh giá sự kiện tại đây:</p>
-                <p><a href="http://127.0.0.1:8000/survey/{event.id}?email={{email}}"
-                      style="background-color: #333333; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
-                      Đánh giá sự kiện
-                   </a></p>
-                <p style="margin-top:20px; color:#666;">Trân trọng,<br>EVENTHUB</p>
-            </body>
-            </html>
-        """)
         for email in recipient_list:
-            email_message = EmailMultiAlternatives(subject, "Cảm ơn bạn đã tham gia!", from_email, bcc=recipient_list)
-            email_message.attach_alternative(mailcontent.format(email=email), "text/html")
+            mailcontent = format_html(f"""
+                <html>
+                <body>
+                    <h2 style="color: #2c3e50;">Cảm ơn bạn đã tham gia sự kiện {event.name}</h2>
+                    <p>Chúng tôi rất mong nhận được phản hồi của bạn để cải thiện các sự kiện sau này.</p>
+                    <p>Hãy vui lòng dành ít phút để đánh giá sự kiện tại đây:</p>
+                    <p><a href="http://127.0.0.1:8000/survey/{event.id}?email={email}"
+                          style="background-color: #333333; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+                          Đánh giá sự kiện
+                       </a></p>
+                    <p style="margin-top:20px; color:#666;">Trân trọng,<br>EVENTHUB</p>
+                </body>
+                </html>
+            """)
+            email_message = EmailMultiAlternatives(subject, "Cảm ơn bạn đã tham gia!", from_email, [email])
+            email_message.attach_alternative(mailcontent, "text/html")
             email_message.send()
+
 
 def surveyView(request, event_id):
     event = get_object_or_404(Event, id=event_id)

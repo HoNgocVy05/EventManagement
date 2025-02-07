@@ -52,6 +52,8 @@ class Attended(models.Model):
 
     class Meta:
         unique_together = ('event', 'email') 
+    def __str__(self):
+        return self.email
 
 class Survey(models.Model):
     event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name="surveys")

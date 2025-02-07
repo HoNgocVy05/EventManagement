@@ -43,11 +43,10 @@
                         <a href="{% url 'addsponsor' event.id %}" class="btn btn-dark mt-2">Thêm nhà tài trợ</a>
                         <a href="{% url 'addsponsor' event.id %}" class="btn btn-dark mt-2">Quản lý</a>
                         <button class="btn btn-danger mt-2" data-bs-toggle="modal" data-bs-target="#confirmEndEventModal">Kết thúc</button>
+                        <a href="{% url 'checkticket' event.id %}" class="btn btn-dark mt-2">check vé</a>
                     {% endif %}
                         <button class="btn btn-danger mt-2" data-bs-toggle="modal" data-bs-target="#confirmDeleteEventModal">Xóa</button>
                 {% endif %}
-                <button id="rateEvent" class="btn btn-dark mt-2">Đánh Giá</button>
-                <a href="{% url 'checkticket' event.id %}" class="btn btn-dark mt-2">check vé</a>
                 <script>
                     document.getElementById("rateEvent").onclick = function() {
                         var eventId = "{{ event.id }}";

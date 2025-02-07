@@ -1,0 +1,51 @@
+{% extends 'master.html' %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="height: 80vh;">
+    <div class="text-center w-40">
+        <h3 class="mb-4">Check in</h3>
+        <form id="checkTicketForm">
+            {% csrf_token %}
+            <input type="text" id="ticketCode" name="qr_code" class="form-control text-center mb-3" 
+                   placeholder="Nhập mã vé..." required autofocus>
+            <button type="submit" class="btn btn-dark w-100">Check</button>
+        </form>
+        <div id="checkResult" class="mt-3 text-center text-danger" style="min-height: 20px;">
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("checkTicketForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        let qrCode = document.getElementById("ticketCode").value;
+        let checkResult = document.getElementById("checkResult");
+
+        fetch("{% url 'checkticket' event_id=event_id %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: "qr_code=" + encodeURIComponent(qrCode)
+        })
+        .then(response => response.json())
+        .then(data => {
+            checkResult.innerHTML = data.message;
+            checkResult.classList.remove("text-danger", "text-success");
+
+            if (data.status === "success") {
+                checkResult.classList.add("text-success");
+            } else {
+                checkResult.classList.add("text-danger");
+            }
+        })
+        .catch(error => {
+            checkResult.innerHTML = "Lỗi kết nối, vui lòng thử lại";
+            checkResult.classList.add("text-danger");
+        });
+    });
+</script>
+
+{% endblock %}

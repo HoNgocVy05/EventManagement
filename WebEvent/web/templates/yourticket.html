@@ -5,10 +5,14 @@
     <div class="row row-cols-1 row-cols-md-4 g-4">
         {% for ticket in tickets %}
             <div class="col">
-                <div class="card shadow-sm h-100 p-4 text-center">
-                    <h4 class="mb-3"><strong>{{ ticket.event.name }}</strong></h4>
-                    <p><strong>Thời gian:</strong> {{ ticket.event.start_time|date:"d/m/Y H:i" }}</p>
-                    <p class="mb-3">Cảm ơn bạn đã tham gia sự kiện của chúng tôi!</p>
+                <div class="card shadow-sm h-100 p-4 text-justify">
+                    <h4 class="mb-2 text-center"><strong>EVENTHUB</strong></h4>
+                    <hr>
+                    <h5 class="mb-3 text-justify">Sự kiện: <strong>{{ ticket.event.name }}</strong></h5>
+                    <h9><strong>Thời gian:</strong> {{ ticket.event.start_time|date:"d/m/Y H:i" }}</h9>
+                    <hr>
+                    <h9 class="mb-3">Cảm ơn bạn đã tham gia sự kiện của chúng tôi!</h9>
+                    <h9 class="mb-3">Mã vé của bạn: {{ ticket.qr_code }}</h9>
                     <div class="d-flex justify-content-center">
                         <div class="border p-2 rounded bg-light">
                             <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ ticket.qr_code }}" 
