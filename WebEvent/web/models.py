@@ -20,6 +20,7 @@ class Event(models.Model):
     image = models.ImageField(upload_to='events/', null=True, blank=True)
     is_ended = models.BooleanField(default=False)
     sponsors = models.ManyToManyField('Sponsor', related_name="events")
+    ticket_sold = models.IntegerField(default=0)
     
     def __str__(self):
         return self.name

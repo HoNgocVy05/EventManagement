@@ -149,14 +149,12 @@ def deleteevent(request, event_id):
 
 def eventdetail(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    user_has_ticket = Ticket.objects.filter(event=event, email=request.user.email).exists()
 
     out_of_tickets = event.tickets <= 0
     context = {'event': event,}
     return render(request, 'eventdetail.html', {
         'event': event, 
-        'out_of_tickets': out_of_tickets, 
-        'user_has_ticket': user_has_ticket})
+        'out_of_tickets': out_of_tickets})
 
 def buyticket(request, event_id):
     event = get_object_or_404(Event, id=event_id)
@@ -165,9 +163,9 @@ def buyticket(request, event_id):
         phone_number = request.POST.get('phone_number')
         quantity = int(request.POST.get('quantity'))
         total_price = event.price * quantity
-        if event.tickets < quantity:
+        if max(event.tickets - event.ticket_sold) < quantity:
             return redirect('buyticket', event_id=event.id)
-        event.tickets -= quantity
+        event.ticket_sold += quantity
         event.save()
         tickets = []
         for _ in range(quantity):
@@ -238,16 +236,17 @@ def eventmanagement(request):
     event_data = []
     for event in events:
         sponsors = event.sponsors.all()
-        tickets_sold = Ticket.objects.filter(event=event).count()
         event_data.append({
             "event": event,
             "sponsors": event.event_sponsors.all(),
             "total_tickets": event.tickets,
-            "tickets_sold": tickets_sold,
-            "remaining_tickets": max(event.tickets - tickets_sold, 0),
+            "tickets_sold": event.ticket_sold,
+            "remaining_tickets": max(event.tickets - event.ticket_sold, 0),
             "ticket_list": Ticket.objects.filter(event=event),
         })
-    return render(request, "eventmanagement.html", {"event_data": event_data})
+    return render(request, "eventmanagement.html", {
+        "event_data": event_data,
+        'event': events.first() if events.exists() else None})
 
 def addsponsor(request, event_id):
     event = get_object_or_404(Event, id=event_id)  
@@ -299,7 +298,14 @@ def send_sponsor_email(user, event, password=None, existing=False):
             <body>
                 <h2 style="color: #2c3e50;">Kính chào {user.username},</h2>
                 <p>Bạn đã được thêm làm nhà tài trợ cho sự kiện <strong>{event.name}</strong>.</p>
-                <p>Bạn có thể đăng nhập vào hệ thống bằng tài khoản chúng tôi cung cấp trước đó để xem báo cáo sự kiện. <br>Nếu quên mật khẩu, hãy liên hệ qua <strong>hna.191081@gmail.com<strong> để được hỗ trợ</p>
+                <p>Cảm ơn bạn đã tin tưởng chúng tôi! Giờ đây, bạn có thể đăng nhập vào hệ thống bằng tài khoản chúng tôi cung cấp trước đó để xem báo cáo sự kiện. 
+                    <br>Nếu quên mật khẩu, hãy liên hệ qua <strong>hna.191081@gmail.com<strong> để được hỗ trợ</p>
+                <p>
+                    <a href="http://127.0.0.1:8000/"
+                        style="background-color: #333333; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+                        Đăng nhập tại đây
+                    </a>
+                </p>
                 <p style="margin-top:20px; color:#666;">Trân trọng,<br>Ban tổ chức sự kiện</p>
             </body>
             </html>
@@ -309,10 +315,17 @@ def send_sponsor_email(user, event, password=None, existing=False):
             <html>
             <body>
                 <h2 style="color: #2c3e50;">Kính chào {user.username},</h2>
-                <p>Bạn đã được tạo tài khoản và trở thành nhà tài trợ cho sự kiện <strong>{event.name}</strong>.</p>
+                <p>Bạn đã được tạo tài khoản và trở thành nhà tài trợ cho sự kiện <strong>{event.name}</strong></p>
+                <p>Cảm ơn bạn đã tin tưởng đúng tôi!</p>
                 <p><strong>Email:</strong> {user.email}</p>
                 <p><strong>Mật khẩu:</strong> {password}</p>
                 <p>Bạn có thể đăng nhập vào hệ thống để xem báo cáo sự kiện.</p>
+                <p>
+                    <a href="http://127.0.0.1:8000/"
+                        style="background-color: #333333; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+                        Đăng nhập tại đây
+                    </a>
+                </p>
                 <p style="margin-top:20px; color:#666;">Trân trọng,<br>Ban tổ chức sự kiện</p>
             </body>
             </html>
@@ -331,7 +344,7 @@ def checksponsor(request):
     
 def checkticket(request, event_id):
     if request.method == 'POST':
-        qr_code = request.POST.get('qr_code', '').strip()  # Đổi thành qr_code
+        qr_code = request.POST.get('qr_code', '').strip()
         event = get_object_or_404(Event, id=event_id)
         ticket = Ticket.objects.filter(qr_code=qr_code, event=event).first()
         if ticket:
@@ -361,10 +374,12 @@ def sendSurveyEmail(event):
                     <h2 style="color: #2c3e50;">Cảm ơn bạn đã tham gia sự kiện {event.name}</h2>
                     <p>Chúng tôi rất mong nhận được phản hồi của bạn để cải thiện các sự kiện sau này.</p>
                     <p>Hãy vui lòng dành ít phút để đánh giá sự kiện tại đây:</p>
-                    <p><a href="http://127.0.0.1:8000/survey/{event.id}?email={email}"
+                    <p>
+                        <a href="http://127.0.0.1:8000/survey/{event.id}?email={email}"
                           style="background-color: #333333; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
                           Đánh giá sự kiện
-                       </a></p>
+                       </a>
+                    </p>
                     <p style="margin-top:20px; color:#666;">Trân trọng,<br>EVENTHUB</p>
                 </body>
                 </html>

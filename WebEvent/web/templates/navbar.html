@@ -30,7 +30,7 @@
                     </ul>
                   </div>  
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'eventmanagement' %}">Quản lý</a>
+                    <a class="nav-link" href="{% url 'eventmanagement'%}">Quản lý chung</a>
                   </li> 
                 {% endif %}
                 {% if user.is_authenticated and user.sponsor_set.exists %}

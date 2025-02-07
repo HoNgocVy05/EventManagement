@@ -1,4 +1,5 @@
 {% extends 'master.html' %}
+
 {% block title %} Quản lý sự kiện {% endblock %}
 
 {% block content %}
@@ -36,7 +37,7 @@
                         </button>
                     </td>
                 </tr>
-                <tr id="tickets-{{ data.event.id }}" class="collapse bg-white" >
+                <tr id="tickets-{{ data.event.id }}" class="collapse bg-white">
                     <td colspan="6">
                         <ul class="list-group">
                             {% for ticket in data.ticket_list %}
@@ -76,17 +77,22 @@
                 <tr class="table-secondary text-center">
                     <td class="text-start"><strong>{{ data.event.name }}</strong></td>
                     <td>
-                        <button class="btn btn-dark toggle-btn" data-bs-toggle="collapse" data-bs-target="#tickets-{{ data.event.id }}">
+                        <button class="btn btn-dark toggle-btn" data-bs-toggle="collapse" data-bs-target="#sponsors-{{ data.event.id }}">
                             Xem danh sách nhà tài trợ
                         </button>
                     </td>
                 </tr>
-                <tr id="tickets-{{ data.event.id }}" class="collapse bg-white" >
+                <tr id="sponsors-{{ data.event.id }}" class="collapse bg-white">
                     <td colspan="6">
                         <ul class="list-group">
                             {% for sponsor in data.sponsors %}
                                 <li class="list-group-item">
                                     <strong>Tên:</strong> {{ sponsor.user.username }}<strong> - Email:</strong> {{ sponsor.user.email }}
+                                    {% comment %} <button class="btn btn-dark btn-sm float-end me-2" data-bs-toggle="modal" data-bs-target="#confirmDeleteSponsorModal"
+                                            data-sponsor-id="{{ sponsor.id }}" data-sponsor-name="{{ sponsor.user.username }}">
+                                        Xóa
+                                    </button>
+                                    <a href="{% url 'editsponsor' sponsor_id=sponsor.id %}" class="btn btn-dark btn-sm float-end me-2">Sửa</a> {% endcomment %}
                                 </li>
                             {% empty %}
                                 <li class="list-group-item text-muted">Chưa có nhà tài trợ cho sự kiện này.</li>
@@ -103,6 +109,6 @@
         </table>
     </div>
 </div>
+
 {% endif %}
 {% endblock %}
-
