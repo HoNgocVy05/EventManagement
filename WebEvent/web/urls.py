@@ -30,6 +30,7 @@ urlpatterns = [
     path('event/<int:event_id>/report/', views.report, name='report'),
     path("edit-sponsor/<int:sponsor_id>/", views.editsponsor, name="editsponsor"),
     path("delete-sponsor/<int:sponsor_id>/", views.deletesponsor, name="deletesponsor"),
+    path("event/<int:event_id>/add-guest/", views.addguest, name="addguest"),
 ]
 
 if settings.DEBUG:

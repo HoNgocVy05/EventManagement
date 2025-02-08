@@ -1,0 +1,44 @@
+{% extends "master.html" %}
+{% block title %}Thêm Khách Mời{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="card p-4">
+        <h3 class="text-center">Thêm Khách Mời Cho "{{ event.name }}"</h3>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="num_guests" class="form-label">Số lượng khách mời</label>
+                <input type="number" id="num_guests" name="num_guests" min="1" class="form-control" required>
+            </div>
+            <div id="guest_form_area"></div>
+            <button type="submit" class="btn btn-dark mt-3">Gửi thư mời</button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById("num_guests").addEventListener("input", function() {
+    let count = this.value;
+    let formArea = document.getElementById("guest_form_area");
+    formArea.innerHTML = "";
+    
+    for (let i = 0; i < count; i++) {
+        let guestForm = `
+            <div class="border p-3 mt-3">
+                <h5>Khách mời thứ ${i + 1}</h5>
+                <div class="mb-2">
+                    <label class="form-label">Tên</label>
+                    <input type="text" name="name_${i}" class="form-control" required>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email_${i}" class="form-control" required>
+                </div>
+            </div>
+        `;
+        formArea.innerHTML += guestForm;
+    }
+});
+</script>
+{% endblock %}

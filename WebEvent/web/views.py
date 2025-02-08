@@ -242,7 +242,7 @@ def eventmanagement(request):
             "total_tickets": event.tickets,
             "tickets_sold": event.ticket_sold,
             "remaining_tickets": max(event.tickets - event.ticket_sold, 0),
-            "ticket_list": Ticket.objects.filter(event=event),
+            "ticket_list": Ticket.objects.filter(event=event, is_guest=False),
         })
     return render(request, 'eventmanagement.html', {
         "event_data": event_data,
@@ -252,19 +252,21 @@ def report(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     sponsors = event.sponsors.all() if event.sponsors.exists() else []
     surveys = Survey.objects.filter(event=event)
+    guest_tickets = Ticket.objects.filter(event=event, is_guest=True)
     event_data = []
     event_data.append({
-    "event": event,
-    "sponsors": event.event_sponsors.all(),
-    "total_tickets": event.tickets,
-    "tickets_sold": event.ticket_sold,
-    "remaining_tickets": max(event.tickets - event.ticket_sold, 0),
-    "ticket_list": Ticket.objects.filter(event=event),
+        "event": event,
+        "sponsors": event.event_sponsors.all(),
+        "total_tickets": event.tickets,
+        "tickets_sold": event.ticket_sold,
+        "remaining_tickets": max(event.tickets - event.ticket_sold, 0),
+        "ticket_list": Ticket.objects.filter(event=event, is_guest=False),
     })
     return render(request, "report.html", {
         'event_data': event_data, 
         'sponsor': sponsors,
-        'surveys': surveys})
+        'surveys': surveys,
+        "guest_tickets": guest_tickets,})
 
 def addsponsor(request, event_id):
     event = get_object_or_404(Event, id=event_id)  
@@ -320,6 +322,7 @@ def deletesponsor(request, sponsor_id):
     sponsor = get_object_or_404(Sponsor, id=sponsor_id)
     event_id = sponsor.event.id
     sponsor.delete()
+    sponsor.user.delete()
     return redirect('report', event_id=event_id)
 
 def send_sponsor_email(user, event, password=None, existing=False):
@@ -447,3 +450,49 @@ def surveyView(request, event_id):
 
 def thankyou(request):
     return render(request, 'thankyou.html')
+
+def addguest(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    
+    if request.method == "POST":
+        num_guests = int(request.POST.get("num_guests", 0))
+        guest_data = []
+
+        for i in range(num_guests):
+            name = request.POST.get(f"name_{i}")
+            email = request.POST.get(f"email_{i}")
+            if name and email:
+                qr_code = str(uuid.uuid4())[:8]
+                ticket=Ticket.objects.create(user=None, event=event, email=email, qr_code=qr_code, is_guest=True)
+                guest_data.append({"name": name, "email": email, "qr_code": qr_code})
+
+        subject = f"EVENTHUB - Thư mời tham dự sự kiện"
+        from_email = "hna.191081@gmail.com"
+
+        for guest in guest_data:
+            mailcontent = format_html(f"""
+                <html>
+                <body>
+                    <h2 style="color: #2c3e50;">Xin chào {guest['name']},</h2>
+                    <p>Chúng tôi là <b>EVENTHUB</b>. Chúng tôi trân trọng kính mời bạn tham dự sự kiện <b>{event.name}</b>.</p>
+                    <p>Xem chi tiết sự kiện tại đây:</p>
+                    <p>
+                        <a href="http://127.0.0.1:8000/event/{event.id}/"
+                          style="background-color: #333333; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+                          Xem sự kiện
+                       </a>
+                    </p>
+                    <p style="margin-top:20px; color:#666;">Đây là vé của bạn:</p>
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={guest['qr_code']}" alt="QR Code">
+                    <p style="margin-top:10px;">Chúng tôi rất mong có sự góp mặt của bạn tại sự kiện. <br>Khi tham dự, hãy mang theo vé để check-in.</p>
+                    <p style="margin-top:20px; color:#666;">Trân trọng,<br>EVENTHUB</p>
+                </body>
+                </html>
+            """)
+            email_message = EmailMultiAlternatives(subject, "Thư mời tham dự sự kiện!", from_email, [guest["email"]])
+            email_message.attach_alternative(mailcontent, "text/html")
+            email_message.send()
+
+        return redirect('report', event_id=event_id)
+
+    return render(request, "addguest.html", {"event": event})

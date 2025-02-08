@@ -112,7 +112,6 @@
     </div>
 </div>
 
-{% if surveys %}
 <div class="container mt-5 mb-5">
     <h3>Các đánh giá về sự kiện</h3>
     <div class="table-responsive">
@@ -128,22 +127,50 @@
                 </tr>
             </thead>
             <tbody>
-                {% for survey in surveys %}
-                    <tr>
-                        <td>{{ forloop.counter }}</td>
-                        <td>{{ survey.email }}</td>
-                        <td>{{ survey.rating_1 }}</td>
-                        <td>{{ survey.rating_2 }}</td>
-                        <td>{{ survey.rating_3 }}</td>
-                        <td>{{ survey.feedback|default:"Không có phản hồi" }}</td>
-                    </tr>
-                {% endfor %}
+                {% if surveys %}
+                    {% for survey in surveys %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ survey.email }}</td>
+                            <td>{{ survey.rating_1 }}</td>
+                            <td>{{ survey.rating_2 }}</td>
+                            <td>{{ survey.rating_3 }}</td>
+                            <td>{{ survey.feedback|default:"Không có phản hồi" }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted">Chưa có đánh giá nào cho sự kiện này.</td>
+                </tr>
+                {% endif %}
             </tbody>
         </table>
-    {% else %}
-        <p>Chưa có đánh giá nào cho sự kiện này.</p>
-    {% endif %}
     </div>
 </div>
 
+<div class="container mt-5 mb-5">
+    <h3>Danh sách khách mời của sự kiện</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr class="table-dark text-center">
+                    <th>Email</th>
+                    <th>Mã vé</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in guest_tickets %}
+                <tr>
+                    <td>{{ ticket.email }}</td>
+                    <td>{{ ticket.qr_code }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="text-muted text-center">Không có vé khách mời.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

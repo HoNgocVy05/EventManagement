@@ -28,12 +28,13 @@ class Event(models.Model):
     
 class Ticket(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     email = models.EmailField()
     phone_number = models.CharField(max_length=10)
     qr_code = models.CharField(max_length=100, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_used = models.BooleanField(default=False)
+    is_guest = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Vé của {self.user.username} - {self.event.name}"
@@ -68,3 +69,11 @@ class Survey(models.Model):
 
     def __str__(self):
         return f"Survey for {self.event.name} by {self.email}"
+    
+class Guest(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="guests")
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+
+    def __str__(self):
+        return f"{self.name} - {self.email}"

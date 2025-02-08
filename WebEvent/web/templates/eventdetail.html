@@ -41,8 +41,9 @@
                     <a href="{% url 'event' event.id %}" class="btn btn-dark mt-2">Sửa</a>
                     {% if not event.is_ended %}
                         <a href="{% url 'addsponsor' event.id %}" class="btn btn-dark mt-2">Thêm nhà tài trợ</a>
-                        <button class="btn btn-danger mt-2" data-bs-toggle="modal" data-bs-target="#confirmEndEventModal">Kết thúc</button>
+                        <a href="{% url 'addguest' event.id %}" class="btn btn-dark mt-2">Thêm khách mời</a>
                         <a href="{% url 'checkticket' event.id %}" class="btn btn-dark mt-2">check vé</a>
+                        <button class="btn btn-danger mt-2" data-bs-toggle="modal" data-bs-target="#confirmEndEventModal">Kết thúc</button>
                     {% endif %}
                       <a href="{% url 'report' event.id %}" class="btn btn-dark mt-2">Quản lý</a>
                       <button class="btn btn-danger mt-2" data-bs-toggle="modal" data-bs-target="#confirmDeleteEventModal">Xóa</button>
