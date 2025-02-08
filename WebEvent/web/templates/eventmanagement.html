@@ -88,11 +88,6 @@
                             {% for sponsor in data.sponsors %}
                                 <li class="list-group-item">
                                     <strong>Tên:</strong> {{ sponsor.user.username }}<strong> - Email:</strong> {{ sponsor.user.email }}
-                                    {% comment %} <button class="btn btn-dark btn-sm float-end me-2" data-bs-toggle="modal" data-bs-target="#confirmDeleteSponsorModal"
-                                            data-sponsor-id="{{ sponsor.id }}" data-sponsor-name="{{ sponsor.user.username }}">
-                                        Xóa
-                                    </button>
-                                    <a href="{% url 'editsponsor' sponsor_id=sponsor.id %}" class="btn btn-dark btn-sm float-end me-2">Sửa</a> {% endcomment %}
                                 </li>
                             {% empty %}
                                 <li class="list-group-item text-muted">Chưa có nhà tài trợ cho sự kiện này.</li>

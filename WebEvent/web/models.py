@@ -21,6 +21,7 @@ class Event(models.Model):
     is_ended = models.BooleanField(default=False)
     sponsors = models.ManyToManyField('Sponsor', related_name="events")
     ticket_sold = models.IntegerField(default=0)
+    curr_ticket = models.IntegerField(default=0)
     
     def __str__(self):
         return self.name

@@ -136,7 +136,6 @@ def endevent(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     event.is_ended = True
     event.status = 'Completed'
-    Ticket.objects.filter(event=event).delete()
     sendSurveyEmail(event)
     event.save()
     return redirect('eventdetail', event_id=event.id)
@@ -163,7 +162,8 @@ def buyticket(request, event_id):
         phone_number = request.POST.get('phone_number')
         quantity = int(request.POST.get('quantity'))
         total_price = event.price * quantity
-        if max(event.tickets - event.ticket_sold) < quantity:
+        event.curr_ticket = max(event.tickets - event.ticket_sold, 0)
+        if event.curr_ticket < quantity:
             return redirect('buyticket', event_id=event.id)
         event.ticket_sold += quantity
         event.save()
@@ -244,9 +244,27 @@ def eventmanagement(request):
             "remaining_tickets": max(event.tickets - event.ticket_sold, 0),
             "ticket_list": Ticket.objects.filter(event=event),
         })
-    return render(request, "eventmanagement.html", {
+    return render(request, 'eventmanagement.html', {
         "event_data": event_data,
         'event': events.first() if events.exists() else None})
+
+def report(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    sponsors = event.sponsors.all() if event.sponsors.exists() else []
+    surveys = Survey.objects.filter(event=event)
+    event_data = []
+    event_data.append({
+    "event": event,
+    "sponsors": event.event_sponsors.all(),
+    "total_tickets": event.tickets,
+    "tickets_sold": event.ticket_sold,
+    "remaining_tickets": max(event.tickets - event.ticket_sold, 0),
+    "ticket_list": Ticket.objects.filter(event=event),
+    })
+    return render(request, "report.html", {
+        'event_data': event_data, 
+        'sponsor': sponsors,
+        'surveys': surveys})
 
 def addsponsor(request, event_id):
     event = get_object_or_404(Event, id=event_id)  
@@ -261,23 +279,23 @@ def addsponsor(request, event_id):
         if sponsor_email:
             sponsor_user = User.objects.filter(email=sponsor_email).first()
             if not sponsor_user:
-                return render(request, "addsponsor.html", {
+                return render(request, 'addsponsor.html', {
                     "event": event,
                     "error_message": "Email không tồn tại trong hệ thống!"
                 })     
             if Sponsor.objects.filter(user=sponsor_user, event=event).exists():
-                return render(request, "addsponsor.html", {"event": event, "error_message": "Tài khoản này đã tồn tại trong danh sách nhà tại trợ cho sự kiện này!"})
+                return render(request, 'addsponsor.html', {"event": event, "error_message": "Tài khoản này đã tồn tại trong danh sách nhà tại trợ cho sự kiện này!"})
 
             Sponsor.objects.create(user=sponsor_user, event=event)
             send_sponsor_email(sponsor_user, event, existing=True)
 
         else:
             if password != confirm_psw:
-                return render(request, "addsponsor.html", {"event": event, "error_message": "Mật khẩu không khớp!"})
+                return render(request, 'addsponsor.html', {"event": event, "error_message": "Mật khẩu không khớp!"})
             if User.objects.filter(email=email).exists():
-                return render(request, "addsponsor.html", {"event": event, "error_message": "Email đã tồn tại!"})
+                return render(request, 'addsponsor.html', {"event": event, "error_message": "Email đã tồn tại!"})
             if User.objects.filter(username=name).exists():
-                return render(request, "addsponsor.html", {"event": event, "error_message": "Tên đã tồn tại!"})
+                return render(request, 'addsponsor.html', {"event": event, "error_message": "Tên đã tồn tại!"})
             sponsor_user = User.objects.create(
                 username=name,
                 email=email,
@@ -285,8 +303,24 @@ def addsponsor(request, event_id):
             )
             Sponsor.objects.create(user=sponsor_user, event=event)
             send_sponsor_email(sponsor_user, event, password)
-        return redirect("eventdetail", event_id=event.id)
-    return render(request, "addsponsor.html", {"event": event, "available_sponsors": available_sponsors})
+        return redirect('eventdetail', event_id=event.id)
+    return render(request, 'addsponsor.html', {"event": event, "available_sponsors": available_sponsors})
+
+def editsponsor(request, sponsor_id):
+    sponsor = get_object_or_404(Sponsor, id=sponsor_id)
+    event_id = sponsor.event.id
+    if request.method == "POST":
+        sponsor.user.username = request.POST.get("username")
+        sponsor.user.email = request.POST.get("email")
+        sponsor.user.save()
+        return redirect('report', event_id=event_id)
+    return render(request, 'editsponsor.html', {"sponsor": sponsor})
+
+def deletesponsor(request, sponsor_id):
+    sponsor = get_object_or_404(Sponsor, id=sponsor_id)
+    event_id = sponsor.event.id
+    sponsor.delete()
+    return redirect('report', event_id=event_id)
 
 def send_sponsor_email(user, event, password=None, existing=False):
     subject = "Bạn đã trở thành nhà tài trợ sự kiện tại EVENTHUB"
@@ -357,8 +391,6 @@ def checkticket(request, event_id):
             return JsonResponse({'status': 'success', 'message': 'Check-in thành công'})
         return JsonResponse({'status': 'failed', 'message': 'Mã vé không tồn tại trong sự kiện'})
     return render(request, 'checkticket.html', {'event_id': event_id})
-
-
 
 def sendSurveyEmail(event):
     subject = "Cảm ơn bạn đã tham gia sự kiện!"

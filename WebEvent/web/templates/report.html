@@ -1,0 +1,149 @@
+{% extends 'master.html' %}
+
+{% block title %} Báo cáo sự kiện{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <h3>Bảng thống kê sự kiện</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered rounded overflow-hidden">
+            <thead>
+                <tr class="table-dark text-center">
+                    <th class="text-nowrap">Tên sự kiện</th>
+                    <th class="text-nowrap">Tổng số vé</th>
+                    <th class="text-nowrap">Số vé đã bán</th>
+                    <th class="text-nowrap">Số vé còn lại</th>
+                    <th class="text-nowrap">Trạng thái</th>
+                    <th class="text-nowrap">Thông tin vé</th>
+                    <th class="text-nowrap">Nhà tài trợ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in event_data %}
+                <tr class="table-secondary text-center align-middle">
+                    <td><strong>{{ data.event.name }}</strong></td>
+                    <td>{{ data.total_tickets }}</td>
+                    <td>{{ data.tickets_sold }}</td>
+                    <td>{{ data.remaining_tickets }}</td>
+                    <td>
+                        {% if data.event.is_ended %}
+                            <span class="badge bg-secondary">Đã kết thúc</span>
+                        {% else %}
+                            <span class="badge bg-success">Sắp diễn ra</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-dark w-100" data-bs-toggle="collapse" data-bs-target="#tickets-{{ data.event.id }}">
+                            Xem
+                        </button>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-dark w-100" data-bs-toggle="collapse" data-bs-target="#sponsors-{{ data.event.id }}">
+                            Xem
+                        </button>
+                    </td>
+                </tr>
+                <tr id="tickets-{{ data.event.id }}" class="collapse">
+                    <td colspan="7">
+                        <div class="p-3 border rounded bg-light">
+                            <ul class="list-group">
+                                {% for ticket in data.ticket_list %}
+                                    <li class="list-group-item">
+                                        <strong>Email:</strong> {{ ticket.email }} - 
+                                        <strong>SĐT:</strong> {{ ticket.phone_number }} - 
+                                        <strong>QR:</strong> {{ ticket.qr_code }} - 
+                                        <strong>Mua lúc:</strong> {{ ticket.created_at|date:"d/m/Y H:i" }}
+                                    </li>
+                                {% empty %}
+                                    <li class="list-group-item text-muted">Chưa có vé được bán.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                <tr id="sponsors-{{ data.event.id }}" class="collapse">
+                    <td colspan="7">
+                        <div class="p-3 border rounded bg-light">
+                            <ul class="list-group">
+                                {% for sponsor in data.sponsors %}
+                                    <li class="list-group-item">
+                                        <strong>Tên:</strong> {{ sponsor.user.username }} - 
+                                        <strong>Email:</strong> {{ sponsor.user.email }}
+                                        <button class="btn btn-danger btn-sm float-end me-2" data-bs-toggle="modal" data-bs-target="#confirmDeleteSponsor-{{sponsor.id}}">
+                                            Xóa
+                                        </button>
+                                        <!-- Modal confirm Delete Sponsor-->
+                                        <div class="modal fade" id="confirmDeleteSponsor-{{sponsor.id}}" tabindex="-1" aria-labelledby="confirmDeleteSponsorLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="confirmDeleteSponsorLabel">Xác nhận xóa nhà tài trợ</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Bạn có chắc chắn muốn xóa nhà tài trợ <strong>{{ sponsor.user.username }}</strong>? Hành động này không thể hoàn tác!
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                        <form method="POST" action="{% url 'deletesponsor' sponsor.id %}">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-danger">Xóa</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a href="{% url 'editsponsor' sponsor_id=sponsor.id %}" class="btn btn-dark btn-sm float-end me-2">Sửa</a>
+                                    </li>
+                                {% empty %}
+                                    <li class="list-group-item text-muted">Chưa có nhà tài trợ.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">Không có sự kiện nào.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if surveys %}
+<div class="container mt-5 mb-5">
+    <h3>Các đánh giá về sự kiện</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr class="table-dark text-center">
+                    <th>STT</th>
+                    <th>Email</th>
+                    <th>Mức độ hài lòng về EVENTHUB</th>
+                    <th>Mức độ hài lòng về nội dung sự kiện</th>
+                    <th>Mức độ hài lòng về các nhân viên tại sự kiện</th>
+                    <th class="text-nowrap">Góp ý</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for survey in surveys %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ survey.email }}</td>
+                        <td>{{ survey.rating_1 }}</td>
+                        <td>{{ survey.rating_2 }}</td>
+                        <td>{{ survey.rating_3 }}</td>
+                        <td>{{ survey.feedback|default:"Không có phản hồi" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Chưa có đánh giá nào cho sự kiện này.</p>
+    {% endif %}
+    </div>
+</div>
+
+{% endblock %}
