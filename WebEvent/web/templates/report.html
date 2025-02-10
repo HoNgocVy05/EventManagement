@@ -72,7 +72,6 @@
                                         <button class="btn btn-danger btn-sm float-end me-2" data-bs-toggle="modal" data-bs-target="#confirmDeleteSponsor-{{sponsor.id}}">
                                             Xóa
                                         </button>
-                                        <!-- Modal confirm Delete Sponsor-->
                                         <div class="modal fade" id="confirmDeleteSponsor-{{sponsor.id}}" tabindex="-1" aria-labelledby="confirmDeleteSponsorLabel" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
@@ -105,6 +104,31 @@
                 {% empty %}
                 <tr>
                     <td colspan="7" class="text-center">Không có sự kiện nào.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="container mt-5 mb-5">
+    <h3>Danh sách khách mời của sự kiện</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr class="table-dark text-center">
+                    <th>Tên</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for guest in guests %}
+                <tr>
+                    <td>{{ guest.name }}</td>
+                    <td>{{ guest.email }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="text-muted text-center">Không có khách mời.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -148,29 +172,5 @@
     </div>
 </div>
 
-<div class="container mt-5 mb-5">
-    <h3>Danh sách khách mời của sự kiện</h3>
-    <div class="table-responsive">
-        <table class="table table-bordered">
-            <thead>
-                <tr class="table-dark text-center">
-                    <th>Email</th>
-                    <th>Mã vé</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for ticket in guest_tickets %}
-                <tr>
-                    <td>{{ ticket.email }}</td>
-                    <td>{{ ticket.qr_code }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="2" class="text-muted text-center">Không có vé khách mời.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+
 {% endblock %}

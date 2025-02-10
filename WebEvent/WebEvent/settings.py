@@ -76,17 +76,27 @@ WSGI_APPLICATION = 'WebEvent.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-	'default': {
-		'ENGINE': 'django.db.backends.mysql',
-		'NAME': 'EVENTDB',
-		'USER': 'root',
-		'PASSWORD': 'asdfghjkl',
-		'HOST':'127.0.0.1',
-		'PORT':'3307',
-	}
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'EVENTDB',
+#         'USER': 'root',
+#         'PASSWORD': 'asdfghjkl',
+#         'HOST': 'db', 
+#         'PORT': '3306',
+#     }
+# }
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'EVENTDB',
+        'USER': 'root',
+        'PASSWORD': 'asdfghjkl',
+        'HOST': '127.0.0.1', 
+        'PORT': '3307',
+    }
+}
 
 
 # Password validation

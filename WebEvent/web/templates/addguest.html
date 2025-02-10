@@ -41,4 +41,15 @@ document.getElementById("num_guests").addEventListener("input", function() {
     }
 });
 </script>
+
+    {% if error_message %}
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                setTimeout(function() {
+                    alert("{{ error_message }}");
+                }, 100);
+                history.replaceState({}, document.title, window.location.pathname);
+            });
+        </script>
+    {% endif %}
 {% endblock %}

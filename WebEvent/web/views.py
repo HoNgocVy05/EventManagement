@@ -6,7 +6,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from .models import Event, Ticket, Sponsor, Attended, Survey
+from .models import Event, Ticket, Sponsor, Attended, Survey, Guest
 from django.utils.timezone import make_aware
 import uuid
 from django.core.mail import send_mail
@@ -119,7 +119,7 @@ def promotionemail(event):
                 <p><strong>Thời gian:</strong> {event.start_time}</p>
                 <p><strong>Giá vé:</strong> {'Miễn phí' if event.price == 0 else f"{event.price} VNĐ"}</p>
                 <p>Có thể bạn sẽ quan tâm đến sự kiện này.</p>
-                <p><a href="http://127.0.0.1:8000/event/{event.id}" 
+                <p><a href="http://127.0.0.1:8000/event/detail/{event.id}" 
                       style="background-color: #333333; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
                       Xem Chi Tiết Sự Kiện Tại Đây
                    </a></p>
@@ -253,6 +253,7 @@ def report(request, event_id):
     sponsors = event.sponsors.all() if event.sponsors.exists() else []
     surveys = Survey.objects.filter(event=event)
     guest_tickets = Ticket.objects.filter(event=event, is_guest=True)
+    guests = Guest.objects.filter(event=event)
     event_data = []
     event_data.append({
         "event": event,
@@ -266,7 +267,8 @@ def report(request, event_id):
         'event_data': event_data, 
         'sponsor': sponsors,
         'surveys': surveys,
-        "guest_tickets": guest_tickets,})
+        'guest_tickets': guest_tickets,
+        'guests': guests})
 
 def addsponsor(request, event_id):
     event = get_object_or_404(Event, id=event_id)  
@@ -453,39 +455,33 @@ def thankyou(request):
 
 def addguest(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-    
     if request.method == "POST":
         num_guests = int(request.POST.get("num_guests", 0))
         guest_data = []
-
         for i in range(num_guests):
             name = request.POST.get(f"name_{i}")
             email = request.POST.get(f"email_{i}")
             if name and email:
+                if Guest.objects.filter(event=event, email=email).exists():
+                    return render(request, "addguest.html", {"event": event, "error_message": f"Khách mời với email {email} đã tồn tại!"})
+                guest = Guest.objects.create(event=event, name=name, email=email)
                 qr_code = str(uuid.uuid4())[:8]
-                ticket=Ticket.objects.create(user=None, event=event, email=email, qr_code=qr_code, is_guest=True)
+                Ticket.objects.create(user=None, event=event, email=email, qr_code=qr_code, is_guest=True)
                 guest_data.append({"name": name, "email": email, "qr_code": qr_code})
-
-        subject = f"EVENTHUB - Thư mời tham dự sự kiện"
+        subject = "EVENTHUB - Thư mời tham dự sự kiện"
         from_email = "hna.191081@gmail.com"
-
         for guest in guest_data:
             mailcontent = format_html(f"""
                 <html>
                 <body>
                     <h2 style="color: #2c3e50;">Xin chào {guest['name']},</h2>
                     <p>Chúng tôi là <b>EVENTHUB</b>. Chúng tôi trân trọng kính mời bạn tham dự sự kiện <b>{event.name}</b>.</p>
-                    <p>Xem chi tiết sự kiện tại đây:</p>
-                    <p>
-                        <a href="http://127.0.0.1:8000/event/{event.id}/"
-                          style="background-color: #333333; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
-                          Xem sự kiện
-                       </a>
-                    </p>
-                    <p style="margin-top:20px; color:#666;">Đây là vé của bạn:</p>
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={guest['qr_code']}" alt="QR Code">
-                    <p style="margin-top:10px;">Chúng tôi rất mong có sự góp mặt của bạn tại sự kiện. <br>Khi tham dự, hãy mang theo vé để check-in.</p>
+                    <p><a href="http://127.0.0.1:8000/event/detail/{event.id}/" style="background-color: #3498db; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">Xem sự kiện</a></p>
+                    <p style="margin-top:10px;">Khi tham dự, hãy mang theo vé để check-in.</p>
                     <p style="margin-top:20px; color:#666;">Trân trọng,<br>EVENTHUB</p>
+                    <hr>
+                    <p style="margin-top:20px; color:#666;">Đây là vé của bạn: {guest['qr_code']}</p>
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={guest['qr_code']}" alt="QR Code">
                 </body>
                 </html>
             """)
@@ -493,6 +489,5 @@ def addguest(request, event_id):
             email_message.attach_alternative(mailcontent, "text/html")
             email_message.send()
 
-        return redirect('report', event_id=event_id)
-
+        return redirect("report", event_id=event.id)
     return render(request, "addguest.html", {"event": event})
