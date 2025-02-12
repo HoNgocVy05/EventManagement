@@ -1,9 +1,9 @@
 //Tính tổng tiền vé
 function calculateTotal() {
-    let price = parseFloat(document.getElementById("ticketPrice").value);
-    let quantity = parseInt(document.getElementById("quantity").value);
+    let price = parseFloat(document.getElementById("ticketPriceInput").getAttribute("data-price")) || 0;
+    let quantity = parseInt(document.getElementById("quantity").value) || 0;
     let total = price * quantity;
-    document.getElementById("totalPrice").value = total.toLocaleString() + " VNĐ";
+    document.getElementById("totalPrice").value = total.toLocaleString("en-US") + " VND";
 }
 //tùy chỉnh số lượng vé
 function changeQuantity(value) {

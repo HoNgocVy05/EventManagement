@@ -34,6 +34,9 @@ def get_signup(request):
         if User.objects.filter(email=email).exists():
             return render(request, 'signup.html', {"error_message": "Email đã tồn tại!"})
         
+        if User.objects.filter(username=username).exists():
+            return render(request, 'signup.html', {"error_message": "Tên đã tồn tại!"})
+        
         user = User(username=username, email=email, password=make_password(password))
         user.save()
         return redirect('login')
@@ -80,8 +83,12 @@ def add_edit_event(request, event_id=None):
         start_time = request.POST['start_time']
         image = request.FILES.get('image')
         tickets = request.POST.get('tickets', 0)
-        price = request.POST.get('price', '0').replace('.', '').replace(' VND', '')
-        price = int(price) if price.isdigit() else 0
+        price = request.POST.get('price', '0')
+        price = price.replace('.', '').replace(',', '').replace(' VND', '').strip()
+        try:
+            price = int(price)
+        except ValueError:
+            price = 0
         if event:  
             event.name = name
             event.description = description
@@ -104,7 +111,7 @@ def add_edit_event(request, event_id=None):
         event.save()
         if is_new_event:
             promotionemail(event)
-        return redirect('index')
+        return redirect('eventlist')
     return render(request, 'add-edit-event.html', {'event': event})
 
 def promotionemail(event):

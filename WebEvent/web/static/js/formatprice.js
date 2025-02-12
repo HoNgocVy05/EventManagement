@@ -19,19 +19,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 window.onload = function() {
     // Kiểm tra trang hiện tại để xử lý
-    if (document.getElementById('ticketPriceInput')) {
-        // buyticket page
-        var price = document.getElementById('ticketPriceInput').getAttribute('data-price');
-        var formattedPrice = parseInt(price).toLocaleString('en-US') + ' VND';
-        document.getElementById('ticketPriceInput').value = formattedPrice;
-    } 
-    
-    if (document.getElementById('ticketPriceText')) {
-        // eventdetail page
-        var priceElement = document.getElementById('ticketPriceText');
-        var price = parseInt(priceElement.textContent.replace(',', ''));
-        var formattedPrice = price.toLocaleString('en-US') + ' VND';
-        priceElement.textContent = formattedPrice;
+    let priceInput = document.getElementById('ticketPriceInput');
+    if (priceInput) {
+        let price = priceInput.getAttribute('data-price');
+        let formattedPrice = Number(price).toLocaleString('en-US') + ' VND';
+        priceInput.value = formattedPrice;
+    }
+
+    let priceText = document.getElementById('ticketPriceText');
+    if (priceText) {
+        let price = priceText.textContent.replace(/,/g, '').trim();
+        let formattedPrice = Number(price).toLocaleString('en-US') + ' VND';
+        priceText.textContent = formattedPrice;
     }
 };
-

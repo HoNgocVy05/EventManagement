@@ -2,6 +2,7 @@
 {% block content %}
 <div class="container mt-5">
     <h2 class="text-center mb-4">Vé của các sự kiện bạn đã mua</h2>
+    <hr  class="w-50 mx-auto mb-5">
     <div class="row row-cols-1 row-cols-md-4 g-4">
         {% for ticket in tickets %}
             <div class="col">
@@ -26,6 +27,6 @@
             <p class="text-center">Bạn chưa mua vé nào.</p>
         {% endfor %}
     </div>
-    <p class="text-center mt-3"><small>Lưu ý: Khi sự kiện kết thúc hoặc bị xóa khỏi trang web, vé của bạn cũng sẽ bị mất và không còn hiển thị trong trang này!</small></p>
+    <p class="text-center mt-5"><small>Lưu ý: Khi sự kiện kết thúc hoặc bị xóa khỏi trang web, vé của bạn cũng sẽ bị mất và không còn hiển thị trong trang này!</small></p>
 </div> 
 {% endblock %}
