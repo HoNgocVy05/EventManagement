@@ -4,11 +4,13 @@
 
 {% block content %}
 <div class="container mt-5 mb-5">
-    <h3>Bảng thống kê sự kiện</h3>
     <div class="table-responsive">
         <table class="table table-bordered rounded overflow-hidden">
             <thead>
-                <tr class="table-dark text-center">
+                <tr class="table-secondary text-center">
+                    <th colspan="7" class="fs-4 text-uppercase">Bảng thống kê sự kiện</th>
+                </tr>
+                <tr class="table-secondary text-center">
                     <th class="text-nowrap">Tên sự kiện</th>
                     <th class="text-nowrap">Tổng số vé</th>
                     <th class="text-nowrap">Số vé đã bán</th>
@@ -20,8 +22,8 @@
             </thead>
             <tbody>
                 {% for data in event_data %}
-                <tr class="table-secondary text-center align-middle">
-                    <td><strong>{{ data.event.name }}</strong></td>
+                <tr class="text-center align-middle">
+                    <td>{{ data.event.name }}</td>
                     <td>{{ data.total_tickets }}</td>
                     <td>{{ data.tickets_sold }}</td>
                     <td>{{ data.remaining_tickets }}</td>
@@ -33,12 +35,12 @@
                         {% endif %}
                     </td>
                     <td class="text-center">
-                        <button class="btn btn-dark w-100" data-bs-toggle="collapse" data-bs-target="#tickets-{{ data.event.id }}">
+                        <button class="btn btn-secondary w-100" data-bs-toggle="collapse" data-bs-target="#tickets-{{ data.event.id }}">
                             Xem
                         </button>
                     </td>
                     <td class="text-center">
-                        <button class="btn btn-dark w-100" data-bs-toggle="collapse" data-bs-target="#sponsors-{{ data.event.id }}">
+                        <button class="btn btn-secondary w-100" data-bs-toggle="collapse" data-bs-target="#sponsors-{{ data.event.id }}">
                             Xem
                         </button>
                     </td>
@@ -111,18 +113,20 @@
     </div>
 </div>
 <div class="container mt-5 mb-5">
-    <h3>Danh sách khách mời của sự kiện</h3>
     <div class="table-responsive">
         <table class="table table-bordered">
             <thead>
-                <tr class="table-dark text-center">
+                <tr class="table-secondary text-center">
+                    <th colspan="6" class="fs-4 text-uppercase">Danh sách khách mời của sự kiện</th>
+                </tr>
+                <tr class="table-secondary text-center">
                     <th>Tên</th>
                     <th>Email</th>
                 </tr>
             </thead>
             <tbody>
                 {% for guest in guests %}
-                <tr>
+                <tr class="text-center align-middle">
                     <td>{{ guest.name }}</td>
                     <td>{{ guest.email }}</td>
                 </tr>
@@ -137,11 +141,13 @@
 </div>
 
 <div class="container mt-5 mb-5">
-    <h3>Các đánh giá về sự kiện</h3>
     <div class="table-responsive">
         <table class="table table-bordered">
             <thead>
-                <tr class="table-dark text-center">
+                <tr class="table-secondary text-center">
+                    <th colspan="6" class="fs-4 text-uppercase">Các đánh giá về sự kiện</th>
+                </tr>
+                <tr class="table-secondary text-center">
                     <th>STT</th>
                     <th>Email</th>
                     <th>Mức độ hài lòng về EVENTHUB</th>

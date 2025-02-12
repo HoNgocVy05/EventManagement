@@ -4,22 +4,24 @@
 
 {% block content %}
 <div class="container mt-5 mb-5">
-    <h3>Bảng thống kê vé của sự kiện</h3>
     <div class="table-responsive">
         <table class="table table-bordered rounded overflow-hidden">
             <thead>
-                <tr class="table-dark text-center">
+                <tr class="table-secondary text-center">
+                    <th colspan="6" class="fs-4 text-uppercase">Bảng thống kê vé của sự kiện</th>
+                </tr>
+                <tr class="table-secondary text-center">
                     <th>Tên sự kiện</th>
                     <th class="text-nowrap">Tổng số vé</th>
                     <th class="text-nowrap">Số vé đã bán</th>
                     <th class="text-nowrap">Số vé còn lại</th>
                     <th class="text-nowrap">Trạng thái</th>
-                    <th class="text-nowrap">Thao tác</th>
+                    <th class="text-nowrap">Thông tin vé</th>
                 </tr>
             </thead>
             <tbody>
                 {% for data in event_data %}
-                <tr class="table-secondary text-center">
+                <tr class="text-center">
                     <td class="text-start"><strong>{{ data.event.name }}</strong></td>
                     <td>{{ data.total_tickets }}</td>
                     <td>{{ data.tickets_sold }}</td>
@@ -32,7 +34,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        <button class="btn btn-dark toggle-btn" data-bs-toggle="collapse" data-bs-target="#tickets-{{ data.event.id }}">
+                        <button class="btn btn-secondary toggle-btn" data-bs-toggle="collapse" data-bs-target="#tickets-{{ data.event.id }}">
                             Xem
                         </button>
                     </td>
@@ -63,22 +65,24 @@
 
 {% if user.is_authenticated and user.is_staff %}
 <div class="container mt-5 mb-5">
-    <h3>Bảng quản lý nhà tài trợ cho sự kiện</h3>
     <div class="table-responsive">
         <table class="table table-bordered rounded overflow-hidden">
             <thead>
-                <tr class="table-dark text-center">
+                <tr class="table-secondary text-center">
+                    <th colspan="6" class="fs-4 text-uppercase">Bảng quản lý nhà tài trợ cho sự kiện</th>
+                </tr>
+                <tr class="table-secondary text-center">
                     <th>Tên sự kiện</th>
-                    <th>Thao tác</th>
+                    <th>Danh sách nhà tài trợ</th>
                 </tr>
             </thead>
             <tbody>
                 {% for data in event_data %}
-                <tr class="table-secondary text-center">
+                <tr class="text-center">
                     <td class="text-start"><strong>{{ data.event.name }}</strong></td>
                     <td>
-                        <button class="btn btn-dark toggle-btn" data-bs-toggle="collapse" data-bs-target="#sponsors-{{ data.event.id }}">
-                            Xem danh sách nhà tài trợ
+                        <button class="btn btn-secondary toggle-btn" data-bs-toggle="collapse" data-bs-target="#sponsors-{{ data.event.id }}">
+                            Xem
                         </button>
                     </td>
                 </tr>

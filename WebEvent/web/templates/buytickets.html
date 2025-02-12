@@ -23,8 +23,8 @@
                     </div>
                     <div class="mb-3">
                         <label>Giá vé:</label>
-                        <input type="text" id="ticketPrice" class="form-control" value="{{ event.price|floatformat:'0' }}" readonly>
-                    </div>
+                        <input type="text" id="ticketPriceInput" class="form-control" data-price="{{ event.price }}" readonly>
+                    </div>                    
                     <div class="mb-3">
                         <label>Số lượng vé:</label>
                         <input type="number" id="quantity" name="quantity" class="form-control" min="1" max="{{ event.tickets }}" required oninput="calculateTotal()">

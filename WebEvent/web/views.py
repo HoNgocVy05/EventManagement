@@ -80,7 +80,8 @@ def add_edit_event(request, event_id=None):
         start_time = request.POST['start_time']
         image = request.FILES.get('image')
         tickets = request.POST.get('tickets', 0)
-        price = request.POST.get('price', 0)
+        price = request.POST.get('price', '0').replace('.', '').replace(' VND', '')
+        price = int(price) if price.isdigit() else 0
         if event:  
             event.name = name
             event.description = description
@@ -98,6 +99,8 @@ def add_edit_event(request, event_id=None):
                 image=image,
                 price=price
             )
+
+
         event.save()
         if is_new_event:
             promotionemail(event)
@@ -232,7 +235,7 @@ def eventmanagement(request):
     if is_sponsor:
         events = Event.objects.filter(event_sponsors__user=request.user)
     else:
-        events = Event.objects.all()
+        events = Event.objects.all().order_by('is_ended', '-start_time')
     event_data = []
     for event in events:
         sponsors = event.sponsors.all()
@@ -489,5 +492,5 @@ def addguest(request, event_id):
             email_message.attach_alternative(mailcontent, "text/html")
             email_message.send()
 
-        return redirect("report", event_id=event.id)
+        return redirect("index", event_id=event.id)
     return render(request, "addguest.html", {"event": event})

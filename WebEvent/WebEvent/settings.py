@@ -76,6 +76,8 @@ WSGI_APPLICATION = 'WebEvent.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+# #docker
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
