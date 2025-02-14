@@ -474,6 +474,8 @@ def addguest(request, event_id):
             if name and email:
                 if Guest.objects.filter(event=event, email=email).exists():
                     return render(request, "addguest.html", {"event": event, "error_message": f"Khách mời với email {email} đã tồn tại!"})
+                if Guest.objects.filter(event=event, name=name).exists():
+                    return render(request, "addguest.html", {"event": event, "error_message": f"Khách mời với tên {name} đã tồn tại!"})
                 guest = Guest.objects.create(event=event, name=name, email=email)
                 qr_code = str(uuid.uuid4())[:8]
                 Ticket.objects.create(user=None, event=event, email=email, qr_code=qr_code, is_guest=True)
