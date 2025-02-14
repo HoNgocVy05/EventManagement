@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-v80tb^wesq%)m2317)cjmk172&pccki%+klnb6uytptmw-_s0y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -77,28 +77,28 @@ WSGI_APPLICATION = 'WebEvent.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-# #docker
+#docker
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'EVENTDB',
+        'USER': 'event',
+        'PASSWORD': 'asdfghjkl',
+        'HOST': 'db', 
+        'PORT': '3306',
+    }
+}
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
 #         'NAME': 'EVENTDB',
 #         'USER': 'root',
 #         'PASSWORD': 'asdfghjkl',
-#         'HOST': 'db', 
-#         'PORT': '3306',
+#         'HOST': '127.0.0.1', 
+#         'PORT': '3307',
 #     }
 # }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'EVENTDB',
-        'USER': 'root',
-        'PASSWORD': 'asdfghjkl',
-        'HOST': '127.0.0.1', 
-        'PORT': '3307',
-    }
-}
 
 
 # Password validation

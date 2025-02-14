@@ -9,6 +9,7 @@
 <div class="container">
     <div class="container-fluid">
         <div class="row">
+            <!-- 4 card events -->
             {% for event in events|slice:":4" %}
                 <div class="col-sm-3 mb-3">
                     <div class="card cardevent" style="width: 250px; height=300px">
@@ -36,7 +37,6 @@
             {% endfor %}
         </div>
     </div>
-    <!-- Nút "Danh sách sự kiện" -->
     <div class="d-flex justify-content-center mt-4">
         <a href="{% url 'eventlist' %}" class="btn btn-dark">Danh sách sự kiện</a>
     </div>
