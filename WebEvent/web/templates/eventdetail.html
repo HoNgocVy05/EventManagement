@@ -30,31 +30,24 @@
                       {% if out_of_tickets %}
                           <button class="btn btn-success mt-2" data-bs-toggle="modal" data-bs-target="#outOfTicketsModal">Mua vé</button>
                       {% else %}
-                          <a href="{% url 'buyticket' event.id %}" class="btn btn-success mt-2">Mua vé</a>
+                          <a href="{% url 'buyticket' event.id %}" class="btn btn-success mt-2" name="buy">Mua vé</a>
                       {% endif %}
                   {% else %}
-                    <button class="btn btn-success mt-2" data-bs-toggle="modal" data-bs-target="#loginRequiredModal">Mua vé</button>
+                    <button class="btn btn-success mt-2" data-bs-toggle="modal" data-bs-target="#loginRequiredModal" name="buy">Mua vé</button>
                   {% endif %}
                 {% endif %}
             
                 {% if user.is_authenticated and user.is_staff %}
                     <a href="{% url 'event' event.id %}" class="btn btn-dark mt-2">Sửa</a>
                     {% if not event.is_ended %}
-                        <a href="{% url 'addsponsor' event.id %}" class="btn btn-dark mt-2">Thêm nhà tài trợ</a>
-                        <a href="{% url 'addguest' event.id %}" class="btn btn-dark mt-2">Thêm khách mời</a>
+                        <a href="{% url 'addsponsor' event.id %}" class="btn btn-dark mt-2" name="sponsor">Thêm nhà tài trợ</a>
+                        <a href="{% url 'addguest' event.id %}" class="btn btn-dark mt-2" name="guest">Thêm khách mời</a>
                         <a href="{% url 'checkticket' event.id %}" class="btn btn-dark mt-2">Check vé</a>
-                        <button class="btn btn-danger mt-2" data-bs-toggle="modal" data-bs-target="#confirmEndEventModal">Kết thúc</button>
+                        <button class="btn btn-danger mt-2" data-bs-toggle="modal" data-bs-target="#confirmEndEventModal" name="end">Kết thúc</button>
                     {% endif %}
-                      <a href="{% url 'report' event.id %}" class="btn btn-dark mt-2">Quản lý</a>
-                      <button class="btn btn-danger mt-2" data-bs-toggle="modal" data-bs-target="#confirmDeleteEventModal">Xóa</button>
+                      <a href="{% url 'report' event.id %}" class="btn btn-dark mt-2" name="manage">Quản lý</a>
+                      <button class="btn btn-danger mt-2" data-bs-toggle="modal" data-bs-target="#confirmDeleteEventModal" name="delete">Xóa</button>
                 {% endif %}
-                <script>
-                    document.getElementById("rateEvent").onclick = function() {
-                        var eventId = "{{ event.id }}";
-                        var userEmail = "{{ user.email }}";
-                        window.location.href = `/survey/${eventId}/?email=${userEmail}`;
-                    };
-                </script>
             </div>
             <div class="mt-3">
                 <p>{{ event.description }}</p>
@@ -143,5 +136,5 @@
     </div>
   </div>
 </div>
-  
+
 {% endblock %}

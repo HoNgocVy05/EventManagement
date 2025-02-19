@@ -25,8 +25,8 @@
                       Sự kiện
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="eventDropdown">
-                      <li><a class="dropdown-item" href="{% url 'eventlist' %}" >Danh sách sự kiện</a></li>
-                      <li><a class="dropdown-item" href="{% url 'event' %}">Thêm sự kiện</a></li>
+                      <li><a class="dropdown-item list" href="{% url 'eventlist' %}" >Danh sách sự kiện</a></li>
+                      <li><a class="dropdown-item addevent" href="{% url 'event' %}">Thêm sự kiện</a></li>
                     </ul>
                   </div>  
                   <li class="nav-item">
@@ -61,7 +61,7 @@
                 </div>   
               {% else %}
                 <li class="nav-item">
-                  <a class="nav-link" href="{% url 'login' %}">Đăng nhập</a>
+                  <a class="nav-link login" href="{% url 'login' %}">Đăng nhập</a>
                 </li>
               {% endif %} 
             </ul>

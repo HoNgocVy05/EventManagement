@@ -4,7 +4,7 @@
 <div class="container d-flex justify-content-center align-items-center" style="height: 80vh;">
     <div class="text-center w-40">
         <h3 class="mb-4">Check in</h3>
-        <form id="checkTicketForm">
+        <form id="checkTicketForm" data-url="{% url 'checkticket' event_id=event_id %}" data-csrf="{{ csrf_token }}">
             {% csrf_token %}
             <input type="text" id="ticketCode" name="qr_code" class="form-control text-center mb-3" 
                    placeholder="Nhập mã vé..." required autofocus>
@@ -16,36 +16,46 @@
 </div>
 
 <script>
-    document.getElementById("checkTicketForm").addEventListener("submit", function(event) {
-        event.preventDefault();
-
-        let qrCode = document.getElementById("ticketCode").value;
-        let checkResult = document.getElementById("checkResult");
-
-        fetch("{% url 'checkticket' event_id=event_id %}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "X-CSRFToken": "{{ csrf_token }}"
-            },
-            body: "qr_code=" + encodeURIComponent(qrCode)
-        })
-        .then(response => response.json())
-        .then(data => {
-            checkResult.innerHTML = data.message;
-            checkResult.classList.remove("text-danger", "text-success");
-
-            if (data.status === "success") {
-                checkResult.classList.add("text-success");
-            } else {
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkTicketForm = document.getElementById("checkTicketForm");
+        const checkResult = document.getElementById("checkResult");
+        const ticketCodeInput = document.getElementById("ticketCode");
+    
+        checkTicketForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+    
+            const qrCode = ticketCodeInput.value.trim();
+            if (!qrCode) {
+                checkResult.textContent = "Vui lòng nhập mã vé.";
+                checkResult.classList.add("text-danger");
+                return;
+            }
+    
+            try {
+                const response = await fetch("{% url 'checkticket' event_id=event_id %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: new URLSearchParams({ qr_code: qrCode })
+                });
+    
+                const data = await response.json();
+                checkResult.textContent = data.message;
+                checkResult.classList.remove("text-danger", "text-success");
+                checkResult.classList.add(data.status === "success" ? "text-success" : "text-danger");
+    
+            } catch (error) {
+                checkResult.textContent = "Lỗi kết nối, vui lòng thử lại.";
                 checkResult.classList.add("text-danger");
             }
-        })
-        .catch(error => {
-            checkResult.innerHTML = "Lỗi kết nối, vui lòng thử lại";
-            checkResult.classList.add("text-danger");
+    
+            ticketCodeInput.value = "";
+            ticketCodeInput.focus();
         });
     });
+    
 </script>
 
 {% endblock %}

@@ -22,7 +22,10 @@
             <tbody>
                 {% for data in event_data %}
                 <tr class="text-center">
-                    <td class="text-start"><strong>{{ data.event.name }}</strong></td>
+                    <td class="text-start">
+                        <strong>{{ data.event.name }}</strong>
+                        <a class="btn btn-secondary btn-sm float-end me-2" href= "{% url 'eventdetail' data.event.id %}">xem</a>
+                    </td>
                     <td>{{ data.total_tickets }}</td>
                     <td>{{ data.tickets_sold }}</td>
                     <td>{{ data.remaining_tickets }}</td>
@@ -34,7 +37,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        <button class="btn btn-secondary toggle-btn" data-bs-toggle="collapse" data-bs-target="#tickets-{{ data.event.id }}">
+                        <button class="btn btn-secondary btn-sm toggle-btn" data-bs-toggle="collapse" data-bs-target="#tickets-{{ data.event.id }}">
                             Xem
                         </button>
                     </td>
@@ -81,7 +84,7 @@
                 <tr class="text-center">
                     <td class="text-start"><strong>{{ data.event.name }}</strong></td>
                     <td>
-                        <button class="btn btn-secondary toggle-btn" data-bs-toggle="collapse" data-bs-target="#sponsors-{{ data.event.id }}">
+                        <button class="btn btn-secondary btn-sm toggle-btn" data-bs-toggle="collapse" data-bs-target="#sponsors-{{ data.event.id }}">
                             Xem
                         </button>
                     </td>

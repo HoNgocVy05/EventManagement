@@ -1,3 +1,4 @@
+// search tên sự kiện, hiển thị danh sách gợi ý 
 document.addEventListener("DOMContentLoaded", function () {
     let searchInput = document.getElementById("searchInput");
     let suggestionsBox = document.getElementById("suggestions");

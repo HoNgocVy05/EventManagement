@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
         priceInput.value = formatCurrency(priceInput.value);
     }
 });
-
+//thay đổi format của giá tiền (ex: 100000 -> 100,000)
 window.onload = function() {
     // Kiểm tra trang hiện tại để xử lý
     let priceInput = document.getElementById('ticketPriceInput');

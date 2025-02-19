@@ -1,3 +1,4 @@
+//cuộn
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener("click", function (e) {

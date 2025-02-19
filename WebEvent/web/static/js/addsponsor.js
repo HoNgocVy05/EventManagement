@@ -1,3 +1,4 @@
+// Tìm nhà tài trợ dựa vào mail
 document.addEventListener("DOMContentLoaded", function () {
     let emailInput = document.getElementById("sponsor_email");
     let nameInput = document.getElementById("sponsor_name");

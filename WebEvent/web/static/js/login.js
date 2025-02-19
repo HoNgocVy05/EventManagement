@@ -1,3 +1,4 @@
+//ẩn hiện mật khẩu
 function showPassword() {
     var x = document.getElementById("pw-input");
     if (x.type === "password") {
@@ -6,6 +7,7 @@ function showPassword() {
       x.type = "password";
     }
 }
+
 
 $(document).ready(function() {
   $('.toggle-tickets').click(function() {

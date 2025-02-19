@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
-from django.contrib.auth import logout
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -18,7 +17,7 @@ urlpatterns = [
     path('event/delete/<int:event_id>/', views.deleteevent, name='deleteevent'),
     path('event/<int:event_id>/buy/', views.buyticket, name='buyticket'),
     path('your-tickets/', views.yourtickets, name='yourtickets'),
-    path('event-list/', views.evenlist, name='eventlist'),
+    path('event-list/', views.eventlist, name='eventlist'),
     path('introduction/', views.introduction, name='introduction'),
     path('search/', views.search_events, name='search_events'),
     path('event-management/', views.eventmanagement, name='eventmanagement'),

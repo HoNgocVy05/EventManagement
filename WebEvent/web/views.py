@@ -1,15 +1,11 @@
 from web.models import User
-from django.contrib.auth.models import Group
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import login
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
 from .models import Event, Ticket, Sponsor, Attended, Survey, Guest
-from django.utils.timezone import make_aware
 import uuid
-from django.core.mail import send_mail
 from django.core.mail import EmailMultiAlternatives
 from django.utils.html import format_html
 from django.http import JsonResponse
@@ -154,13 +150,12 @@ def deleteevent(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     Ticket.objects.filter(event=event).delete()
     event.delete()
-    return redirect('index')
+    return redirect('list')
 
 def eventdetail(request, event_id):
     event = get_object_or_404(Event, id=event_id)
 
     out_of_tickets = event.tickets <= 0
-    context = {'event': event,}
     return render(request, 'eventdetail.html', {
         'event': event, 
         'out_of_tickets': out_of_tickets})
@@ -171,8 +166,8 @@ def buyticket(request, event_id):
         email = request.POST.get('email')
         phone_number = request.POST.get('phone_number')
         quantity = int(request.POST.get('quantity'))
-        total_price = event.price * quantity
         event.curr_ticket = max(event.tickets - event.ticket_sold, 0)
+
         if event.curr_ticket < quantity:
             return redirect('buyticket', event_id=event.id)
         event.ticket_sold += quantity
@@ -188,18 +183,20 @@ def buyticket(request, event_id):
                 qr_code=qr_code
             )
             tickets.append(ticket)
+
         ticket_details = "".join([
             f"<p><strong>Vé:</strong> {t.qr_code}</p>"
             f'<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={t.qr_code}" alt="QR Code">'
             for t in tickets
         ])
+
         subject = "Xác nhận mua vé"
         from_email = "hna.191081@gmail.com"
         to_email = [email]
         mailcontent = format_html(f"""
             <html>
             <body>
-                <h2 style="color: #2c3e50;">Xác nhận mua vé</h2>
+                <h2 style="color: #2c3e50;">Xác nhận mua vé sự kiện tại EVENTHUB</h2>
                 <p>Chào bạn,</p>
                 <p>Bạn đã mua <strong>{quantity}</strong> vé cho sự kiện <strong>{event.name}</strong>.</p>
                 <p><strong>Thời gian sự kiện:</strong> {event.start_time.strftime("%d/%m/%Y %H:%M")}</p>
@@ -213,6 +210,7 @@ def buyticket(request, event_id):
         email_message = EmailMultiAlternatives(subject, "Bạn đã mua vé thành công.", from_email, to_email)
         email_message.attach_alternative(mailcontent, "text/html")
         email_message.send()
+
         return redirect('yourtickets')   
     return render(request, 'buytickets.html', {'event': event})
 
@@ -220,7 +218,7 @@ def yourtickets(request):
     tickets = Ticket.objects.filter(user=request.user)
     return render(request, 'yourticket.html', {'tickets': tickets})
 
-def evenlist(request):
+def eventlist(request):
     events = Event.objects.all()
     events = Event.objects.all().order_by('is_ended', '-start_time')
     return render(request, 'list.html', {'events': events})
@@ -350,7 +348,7 @@ def send_sponsor_email(user, event, password=None, existing=False):
                 <p>Cảm ơn bạn đã tin tưởng chúng tôi! Giờ đây, bạn có thể đăng nhập vào hệ thống bằng tài khoản chúng tôi cung cấp trước đó để xem báo cáo sự kiện. 
                     <br>Nếu quên mật khẩu, hãy liên hệ qua <strong>hna.191081@gmail.com<strong> để được hỗ trợ</p>
                 <p>
-                    <a href="http://127.0.0.1:8000/"
+                    <a href="http://127.0.0.1:8000/login/"
                         style="background-color: #333333; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
                         Đăng nhập tại đây
                     </a>
@@ -370,7 +368,7 @@ def send_sponsor_email(user, event, password=None, existing=False):
                 <p><strong>Mật khẩu:</strong> {password}</p>
                 <p>Bạn có thể đăng nhập vào hệ thống để xem báo cáo sự kiện.</p>
                 <p>
-                    <a href="http://127.0.0.1:8000/"
+                    <a href="http://127.0.0.1:8000/login/"
                         style="background-color: #333333; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
                         Đăng nhập tại đây
                     </a>
@@ -488,7 +486,9 @@ def addguest(request, event_id):
                 <body>
                     <h2 style="color: #2c3e50;">Xin chào {guest['name']},</h2>
                     <p>Chúng tôi là <b>EVENTHUB</b>. Chúng tôi trân trọng kính mời bạn tham dự sự kiện <b>{event.name}</b>.</p>
-                    <p><a href="http://127.0.0.1:8000/event/detail/{event.id}/" style="background-color: #3498db; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">Xem sự kiện</a></p>
+                    <p>Sự hiện diện của bạn là niềm vinh hạnh của chúng tôi.</p>
+                    <p>Bạn có thể xem chi tiết sự kiện tại đây:</p>
+                    <p><a href="http://127.0.0.1:8000/event/detail/{event.id}/" style="background-color: #333333; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">Xem sự kiện</a></p>
                     <p style="margin-top:10px;">Khi tham dự, hãy mang theo vé để check-in.</p>
                     <p style="margin-top:20px; color:#666;">Trân trọng,<br>EVENTHUB</p>
                     <hr>
@@ -501,5 +501,5 @@ def addguest(request, event_id):
             email_message.attach_alternative(mailcontent, "text/html")
             email_message.send()
 
-        return redirect("index", event_id=event.id)
+        return redirect('eventdetail', event_id=event.id)
     return render(request, "addguest.html", {"event": event})
