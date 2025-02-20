@@ -8,15 +8,16 @@
         <table class="table table-bordered rounded overflow-hidden">
             <thead>
                 <tr class="table-secondary text-center">
-                    <th colspan="6" class="fs-4 text-uppercase">Bảng thống kê vé của sự kiện</th>
+                    <th colspan="7" class="fs-4 text-uppercase">Bảng thống kê vé của sự kiện</th>
                 </tr>
                 <tr class="table-secondary text-center">
                     <th>Tên sự kiện</th>
+                    <th></th>
                     <th class="text-nowrap">Tổng số vé</th>
                     <th class="text-nowrap">Số vé đã bán</th>
                     <th class="text-nowrap">Số vé còn lại</th>
                     <th class="text-nowrap">Trạng thái</th>
-                    <th class="text-nowrap">Thông tin vé</th>
+                    <th class="text-nowrap">Số khách tham gia</th>
                 </tr>
             </thead>
             <tbody>
@@ -24,6 +25,8 @@
                 <tr class="text-center">
                     <td class="text-start">
                         <strong>{{ data.event.name }}</strong>
+                    </td>
+                    <td>
                         <a class="btn btn-secondary btn-sm float-end me-2" href= "{% url 'eventdetail' data.event.id %}">xem</a>
                     </td>
                     <td>{{ data.total_tickets }}</td>
@@ -37,12 +40,17 @@
                         {% endif %}
                     </td>
                     <td>
-                        <button class="btn btn-secondary btn-sm toggle-btn" data-bs-toggle="collapse" data-bs-target="#tickets-{{ data.event.id }}">
+                        {% if data.event.is_ended %}
+                        {% comment %} <button class="btn btn-secondary btn-sm toggle-btn" data-bs-toggle="collapse" data-bs-target="#tickets-{{ data.event.id }}">
                             Xem
-                        </button>
+                        </button> {% endcomment %}
+                            {{ data.attended}}
+                        {% else %}
+                            <p>Sự kiện chưa bắt đầu </p>
+                        {% endif %}
                     </td>
                 </tr>
-                <tr id="tickets-{{ data.event.id }}" class="collapse bg-white">
+                {% comment %} <tr id="tickets-{{ data.event.id }}" class="collapse bg-white">
                     <td colspan="6">
                         <ul class="list-group">
                             {% for ticket in data.ticket_list %}
@@ -55,7 +63,7 @@
                             {% endfor %}
                         </ul>
                     </td>
-                </tr>
+                </tr> {% endcomment %}
                 {% empty %}
                     <tr>
                         <td colspan="6" class="text-center">Không có sự kiện nào.</td>
@@ -85,7 +93,7 @@
                     <td class="text-start"><strong>{{ data.event.name }}</strong></td>
                     <td>
                         <button class="btn btn-secondary btn-sm toggle-btn" data-bs-toggle="collapse" data-bs-target="#sponsors-{{ data.event.id }}">
-                            Xem
+                            Xem thông tin chi tiết
                         </button>
                     </td>
                 </tr>

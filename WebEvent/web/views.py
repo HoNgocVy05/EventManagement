@@ -35,6 +35,7 @@ def get_signup(request):
         
         user = User(username=username, email=email, password=make_password(password))
         user.save()
+        print('đã lưu người dùng')
         return redirect('login')
     return render(request, 'signup.html')
 
@@ -251,6 +252,7 @@ def eventmanagement(request):
             "tickets_sold": event.ticket_sold,
             "remaining_tickets": max(event.tickets - event.ticket_sold, 0),
             "ticket_list": Ticket.objects.filter(event=event, is_guest=False),
+            "attended": Attended.objects.filter(event=event).count(),
         })
     return render(request, 'eventmanagement.html', {
         "event_data": event_data,
@@ -270,6 +272,7 @@ def report(request, event_id):
         "tickets_sold": event.ticket_sold,
         "remaining_tickets": max(event.tickets - event.ticket_sold, 0),
         "ticket_list": Ticket.objects.filter(event=event, is_guest=False),
+        "attended": Attended.objects.filter(event=event).count(),
     })
     return render(request, "report.html", {
         'event_data': event_data, 
