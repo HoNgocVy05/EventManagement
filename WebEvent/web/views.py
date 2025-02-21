@@ -143,6 +143,7 @@ def endevent(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     event.is_ended = True
     event.status = 'Completed'
+    Ticket.objects.filter(event=event).delete()
     sendSurveyEmail(event)
     event.save()
     return redirect('eventdetail', event_id=event.id)
@@ -151,7 +152,7 @@ def deleteevent(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     Ticket.objects.filter(event=event).delete()
     event.delete()
-    return redirect('list')
+    return redirect('eventlist')
 
 def eventdetail(request, event_id):
     event = get_object_or_404(Event, id=event_id)
@@ -216,12 +217,12 @@ def buyticket(request, event_id):
     return render(request, 'buytickets.html', {'event': event})
 
 def yourtickets(request):
-    tickets = Ticket.objects.filter(user=request.user)
+    tickets = Ticket.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'yourticket.html', {'tickets': tickets})
 
 def eventlist(request):
     events = Event.objects.all()
-    events = Event.objects.all().order_by('is_ended', '-start_time')
+    events = Event.objects.all().order_by('is_ended', 'name')
     return render(request, 'list.html', {'events': events})
 
 def introduction(request):
@@ -241,7 +242,7 @@ def eventmanagement(request):
     if is_sponsor:
         events = Event.objects.filter(event_sponsors__user=request.user)
     else:
-        events = Event.objects.all().order_by('is_ended', '-start_time')
+        events = Event.objects.all().order_by('is_ended', 'name')
     event_data = []
     for event in events:
         sponsors = event.sponsors.all()

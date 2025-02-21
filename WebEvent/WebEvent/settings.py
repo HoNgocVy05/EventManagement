@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+import sys
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -156,3 +157,15 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'hna.191081@gmail.com'
 EMAIL_HOST_PASSWORD = 'bsfw ckfi wkne oevp'
+
+if 'test' in sys.argv or 'test_coverage' in sys.argv:
+    DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'EVENTDB',
+        'USER': 'event',
+        'PASSWORD': 'asdfghjkl',
+        'HOST': 'db', 
+        'PORT': '3306',
+    }
+}

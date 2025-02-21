@@ -12,6 +12,7 @@ class a_SignUpTest(unittest.TestCase):
         time.sleep(1)
         driver = self.driver
         driver.find_element(By.CLASS_NAME, "login").click()
+        time.sleep(1)
         driver.find_element(By.NAME, "signup").click()
         time.sleep(1)
 
@@ -20,7 +21,7 @@ class a_SignUpTest(unittest.TestCase):
         driver = self.driver
         driver.find_element(By.NAME, "username").clear()
         driver.find_element(By.NAME, "password").clear()
-        driver.find_element(By.NAME, "username").send_keys("visitor")
+        driver.find_element(By.NAME, "username").send_keys("visitor-test")
         time.sleep(0.5)
         driver.find_element(By.NAME, "email").send_keys("hna.191081@gmail.com")
         time.sleep(0.5)
@@ -40,9 +41,9 @@ class a_SignUpTest(unittest.TestCase):
         driver = self.driver
         driver.find_element(By.NAME, "username").clear()
         driver.find_element(By.NAME, "password").clear()
-        driver.find_element(By.NAME, "username").send_keys("visitor")
+        driver.find_element(By.NAME, "username").send_keys("visitor_test")
         time.sleep(0.5)
-        driver.find_element(By.NAME, "email").send_keys("visitor@gmail.com")
+        driver.find_element(By.NAME, "email").send_keys("visitortest.@gmail.com")
         time.sleep(0.5)
         driver.find_element(By.NAME, "password").send_keys("123")
         time.sleep(0.5)
@@ -60,11 +61,11 @@ class a_SignUpTest(unittest.TestCase):
         driver = self.driver
         driver.find_element(By.NAME, "username").clear()
         driver.find_element(By.NAME, "password").clear()
-        driver.find_element(By.NAME, "username").send_keys("visitor")
+        driver.find_element(By.NAME, "username").send_keys("visitor_test")
         time.sleep(0.5)
-        driver.find_element(By.NAME, "email").send_keys("visitor@gmail.com")
+        driver.find_element(By.NAME, "email").send_keys("visitortest.@gmail.com")
         time.sleep(0.5)
-        driver.find_element(By.NAME, "password").send_keys("1233")
+        driver.find_element(By.NAME, "password").send_keys("1234")
         time.sleep(0.5)
         driver.find_element(By.NAME, "confirm_psw").send_keys("1234")
         time.sleep(1)
@@ -154,7 +155,7 @@ class c_AddEventTest(unittest.TestCase):
         driver = self.driver
 
         #nhập thông tin sự kiện
-        driver.find_element(By.ID, "eventName").send_keys("Ứng Dụng Trí Tuệ Nhân Tạo Trong Kinh Doanh")
+        driver.find_element(By.ID, "eventName").send_keys("aTest - Ứng Dụng Trí Tuệ Nhân Tạo Trong Kinh Doanh")
         time.sleep(0.5)
         driver.find_element(By.ID, "eventDescription").send_keys("Trí tuệ nhân tạo (AI) không còn là một khái niệm xa vời mà đã trở thành công cụ thiết yếu trong nhiều lĩnh vực, đặc biệt là kinh doanh. Hội thapr này sẽ mang đến góc nhìn chuyên sâu về cách AI đang cách mạng hóa các ngành công nghiệp, từ phân tích dữ liệu, tối ưu hóa quy trình cho đến cá nhân hóa trải nghiệm khách hàng.")
         time.sleep(0.5)
@@ -204,32 +205,9 @@ class d_AddSponsorTest(unittest.TestCase):
         driver.find_element(By.NAME, "sponsor").click()
         time.sleep(1)
 
-    #Chọn nhà tài trợ có sẵn - email nhà tài trợ không tồn tại
-    def test_addsponsor1(self):
-        driver = self.driver
-        #email nhà tài trợ không tồn tại
-        driver.find_element(By.NAME, "sponsor_email").send_keys("sponsor10@gmail.com")
-        time.sleep(2)
-        driver.find_element(By.CLASS_NAME, "btn").click()
-        time.sleep(2)
-        # accept alert
-        alert = driver.switch_to.alert
-        alert.accept() 
-        time.sleep(1)
-
-    #Chọn nhà tài trợ có sẵn - thêm thành công
-    def test_addsponsor2(self):
-        driver = self.driver
-        #thêm thành công
-        driver.find_element(By.NAME, "sponsor_email").send_keys("sponsor1@gmail.com")
-        time.sleep(2)
-        driver.find_element(By.NAME, "add").click()
-        time.sleep(2)
-
-    #Tạo tài khoản cho nhà tài trợ mới - mail/tài khoản đã tồn tại
+    #mail/tài khoản đã tồn tại
     def test_addsponsor3(self):
         driver = self.driver
-        #email đã tồn tại
         driver.find_element(By.ID, "new-tab").click()
         time.sleep(1)
         driver.find_element(By.NAME, "name").send_keys("sponsor1")
@@ -248,9 +226,9 @@ class d_AddSponsorTest(unittest.TestCase):
         alert = driver.switch_to.alert
         alert.accept() 
 
+    #tạo và thêm thành công
     def test_addsponsor4(self):
         driver = self.driver
-        #tạo và thêm thành công
         driver.find_element(By.ID, "new-tab").click()
         time.sleep(1)
         driver.find_element(By.NAME, "name").send_keys("sponsor 3")
@@ -300,12 +278,12 @@ class e_AddGuestTest(unittest.TestCase):
         time.sleep(1)
         driver.find_element(By.NAME, "num_guests").send_keys("1")
         time.sleep(1)
-        driver.find_element(By.NAME, "name_0").send_keys("Vy")
+        driver.find_element(By.NAME, "name_0").send_keys("Test")
         time.sleep(0.5)
-        driver.find_element(By.NAME, "email_0").send_keys("vyhn5363@gmail.com")
+        driver.find_element(By.NAME, "email_0").send_keys("vyhn5363@ut.edu.vn")
         time.sleep(1)
         driver.find_element(By.NAME, "addguest").click()
-        time.sleep(2)
+        time.sleep(5)
 
     def tearDown(self):
         self.driver.quit()
@@ -340,7 +318,7 @@ class f_BuyTicketTest(unittest.TestCase):
         #mua vé
         driver.find_element(By.NAME, "buy").click()
         time.sleep(1)
-        driver.find_element(By.NAME, "email").send_keys("visitor@gmail.com")
+        driver.find_element(By.NAME, "email").send_keys("vyho.2022005@gmail.com")
         time.sleep(0.5)
         driver.find_element(By.NAME, "phone_number").send_keys("0123456789")
         time.sleep(0.5)

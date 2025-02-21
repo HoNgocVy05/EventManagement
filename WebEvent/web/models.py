@@ -37,7 +37,7 @@ class Ticket(models.Model):
     is_guest = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"Vé của {self.user.username} - {self.event.name}"
+        return f"Vé của {self.email} - {self.event.name}"
     
 class Sponsor (models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -73,7 +73,7 @@ class Survey(models.Model):
 class Guest(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="guests")
     name = models.CharField(max_length=255)
-    email = models.EmailField(unique=True)
+    email = models.EmailField()
 
     def __str__(self):
         return f"{self.name} - {self.email}"
