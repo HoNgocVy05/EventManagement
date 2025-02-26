@@ -158,14 +158,3 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'hna.191081@gmail.com'
 EMAIL_HOST_PASSWORD = 'bsfw ckfi wkne oevp'
 
-if 'test' in sys.argv or 'test_coverage' in sys.argv:
-    DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'EVENTDB',
-        'USER': 'event',
-        'PASSWORD': 'asdfghjkl',
-        'HOST': 'db', 
-        'PORT': '3306',
-    }
-}

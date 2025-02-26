@@ -205,6 +205,28 @@ class d_AddSponsorTest(unittest.TestCase):
         driver.find_element(By.NAME, "sponsor").click()
         time.sleep(1)
 
+    #Chọn nhà tài trợ có sẵn - email nhà tài trợ không tồn tại
+    def test_addsponsor1(self):
+        driver = self.driver
+        #email nhà tài trợ không tồn tại
+        driver.find_element(By.NAME, "sponsor_email").send_keys("sponsor10@gmail.com")
+        time.sleep(2)
+        driver.find_element(By.NAME, "add").click()
+        time.sleep(2)
+        # accept alert
+        alert = driver.switch_to.alert
+        alert.accept() 
+        time.sleep(1)
+
+    #Chọn nhà tài trợ có sẵn - thêm thành công
+    def test_addsponsor2(self):
+        driver = self.driver
+        #thêm thành công
+        driver.find_element(By.NAME, "sponsor_email").send_keys("sponsor1@gmail.com")
+        time.sleep(2)
+        driver.find_element(By.NAME, "add").click()
+        time.sleep(2)
+        
     #mail/tài khoản đã tồn tại
     def test_addsponsor3(self):
         driver = self.driver

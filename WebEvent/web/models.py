@@ -68,7 +68,7 @@ class Survey(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Survey for {self.event.name} by {self.email}"
+        return f"{self.event.name} - {self.email}"
     
 class Guest(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="guests")
